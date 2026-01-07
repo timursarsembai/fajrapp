@@ -22,6 +22,8 @@ public partial class MainWindow : Window
     private bool _isDragging;
     private Point _dragStartPoint;
     private double _dragStartLeft;
+    private MenuWindow? _menuWindow;
+    private bool _isAutoStartEnabled;
     
     public MainWindow()
     {
@@ -42,12 +44,13 @@ public partial class MainWindow : Window
         MouseLeftButtonDown += MainWindow_MouseLeftButtonDown;
         MouseLeftButtonUp += MainWindow_MouseLeftButtonUp;
         MouseMove += MainWindow_MouseMove;
+        MouseRightButtonUp += MainWindow_MouseRightButtonUp;
         SizeChanged += MainWindow_SizeChanged;
         SourceInitialized += MainWindow_SourceInitialized;
         KeyDown += MainWindow_KeyDown;
         
-        // Initialize autostart menu item
-        AutoStartMenuItem.IsChecked = AutoStartHelper.IsAutoStartEnabled();
+        // Initialize autostart state
+        _isAutoStartEnabled = AutoStartHelper.IsAutoStartEnabled();
         
         // Apply autostart setting if needed
         if (_settings.AutoStart && !AutoStartHelper.IsAutoStartEnabled())
@@ -62,18 +65,65 @@ public partial class MainWindow : Window
     
     private void UpdateLocalization()
     {
-        // Update context menu
-        MenuSettings.Header = LocalizationService.T("Settings");
-        MenuChangePosition.Header = LocalizationService.T("ChangePosition");
-        AutoStartMenuItem.Header = LocalizationService.T("AutoStart");
-        MenuAbout.Header = LocalizationService.T("About");
-        MenuExit.Header = LocalizationService.T("Exit");
-        
         // Update countdown label
         CountdownLabel.Text = LocalizationService.T("In");
         
         // Update move tooltip
         MoveTooltipText.Text = LocalizationService.T("DragWidget");
+    }
+    
+    private void MainWindow_MouseRightButtonUp(object sender, MouseButtonEventArgs e)
+    {
+        // Close existing menu if open
+        if (_menuWindow != null && _menuWindow.IsVisible)
+        {
+            _menuWindow.Close();
+            _menuWindow = null;
+            return;
+        }
+        
+        // Create and show custom menu
+        var menuWindow = new MenuWindow(_isAutoStartEnabled);
+        _menuWindow = menuWindow;
+        
+        // Position menu above widget
+        var widgetRect = new Rect(Left, Top, ActualWidth, ActualHeight);
+        menuWindow.PositionNear(widgetRect);
+        
+        menuWindow.Closed += (s, args) =>
+        {
+            _menuWindow = null;
+            
+            // Handle menu actions
+            if (menuWindow.SettingsRequested)
+            {
+                OpenSettings();
+            }
+            else if (menuWindow.ChangePositionRequested)
+            {
+                EnterMoveMode();
+            }
+            else if (menuWindow.AboutRequested)
+            {
+                var aboutWindow = new AboutWindow();
+                aboutWindow.ShowDialog();
+            }
+            else if (menuWindow.ExitRequested)
+            {
+                _timer.Stop();
+                VirtualDesktopHelper.StopMonitoring();
+                Application.Current.Shutdown();
+            }
+            
+            // Update auto start state
+            if (menuWindow.AutoStartToggled)
+            {
+                _isAutoStartEnabled = AutoStartHelper.IsAutoStartEnabled();
+            }
+        };
+        
+        menuWindow.Show();
+        e.Handled = true;
     }
     
     private void MainWindow_SourceInitialized(object? sender, EventArgs e)
@@ -291,11 +341,6 @@ public partial class MainWindow : Window
         midnightTimer.Start();
     }
     
-    private void Settings_Click(object sender, RoutedEventArgs e)
-    {
-        OpenSettings();
-    }
-    
     private void OpenSettings()
     {
         var settingsWindow = new SettingsWindow(_settings);
@@ -305,26 +350,6 @@ public partial class MainWindow : Window
             _settings = SettingsService.Load();
             _ = LoadPrayerTimesAsync();
         }
-    }
-    
-    private void AutoStart_Click(object sender, RoutedEventArgs e)
-    {
-        var isEnabled = AutoStartMenuItem.IsChecked;
-        AutoStartHelper.SetAutoStart(isEnabled);
-        
-        _settings.AutoStart = isEnabled;
-        SettingsService.Save(_settings);
-    }
-    
-    private void About_Click(object sender, RoutedEventArgs e)
-    {
-        var aboutWindow = new AboutWindow();
-        aboutWindow.ShowDialog();
-    }
-    
-    private void MovePosition_Click(object sender, RoutedEventArgs e)
-    {
-        EnterMoveMode();
     }
     
     private void EnterMoveMode()
@@ -388,10 +413,4 @@ public partial class MainWindow : Window
         SettingsService.Save(_settings);
     }
     
-    private void Exit_Click(object sender, RoutedEventArgs e)
-    {
-        _timer.Stop();
-        VirtualDesktopHelper.StopMonitoring();
-        Application.Current.Shutdown();
-    }
 }

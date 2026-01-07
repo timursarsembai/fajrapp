@@ -79,20 +79,6 @@
             <DropShadowEffect Color="Black" BlurRadius="8" ShadowDepth="1" Opacity="0.3"/>
         </Border.Effect>
         
-        <!-- Context Menu -->
-        <Border.ContextMenu>
-            <ContextMenu x:Name="WidgetContextMenu" Placement="Top" HorizontalOffset="-50" StaysOpen="False">
-                <MenuItem x:Name="MenuSettings" Header="Settings" Click="Settings_Click"/>
-                <Separator/>
-                <MenuItem x:Name="MenuChangePosition" Header="Change position" Click="MovePosition_Click"/>
-                <MenuItem x:Name="AutoStartMenuItem" Header="Auto start" IsCheckable="True" Click="AutoStart_Click"/>
-                <Separator/>
-                <MenuItem x:Name="MenuAbout" Header="About" Click="About_Click"/>
-                <Separator/>
-                <MenuItem x:Name="MenuExit" Header="Exit" Click="Exit_Click"/>
-            </ContextMenu>
-        </Border.ContextMenu>
-        
         <Grid>
             <!-- Move mode glow effect -->
             <Border x:Name="MoveModeGlow"
