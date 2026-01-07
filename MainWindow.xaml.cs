@@ -65,9 +65,6 @@ public partial class MainWindow : Window
         MouseHook.MouseDown += OnGlobalMouseDown;
         MouseHook.Start();
         
-        // Resume hook when popup closes (e.g., by clicking elsewhere)
-        MenuPopup.Closed += (s, e) => MouseHook.Start();
-        
         Closed += (s, e) => MouseHook.Stop();
     }
     
@@ -81,25 +78,35 @@ public partial class MainWindow : Window
         {
             // Get popup position - it's placed above the widget
             var popupChild = MenuPopup.Child as FrameworkElement;
-            if (popupChild != null)
+            if (popupChild != null && popupChild.IsVisible)
             {
-                // Get the popup's screen position
-                var popupPosition = popupChild.PointToScreen(new Point(0, 0));
-                var popupRect = new Rect(popupPosition.X, popupPosition.Y, 
-                    popupChild.ActualWidth, popupChild.ActualHeight);
-                
-                // If click is inside popup, don't close it - let the menu item handle it
-                if (popupRect.Contains(screenPoint))
+                try
                 {
+                    // Get the popup's screen position
+                    var popupPosition = popupChild.PointToScreen(new Point(0, 0));
+                    var popupRect = new Rect(popupPosition.X, popupPosition.Y, 
+                        popupChild.ActualWidth, popupChild.ActualHeight);
+                    
+                    // If click is inside popup OR inside widget, don't close
+                    if (popupRect.Contains(screenPoint) || widgetRect.Contains(screenPoint))
+                    {
+                        return;
+                    }
+                }
+                catch
+                {
+                    // Popup not ready yet, don't close
                     return;
                 }
             }
-            
-            // Click is outside popup, close it
-            if (!widgetRect.Contains(screenPoint))
+            else
             {
-                MenuPopup.IsOpen = false;
+                // Popup child not ready, don't close
+                return;
             }
+            
+            // Click is outside popup and widget, close menu
+            MenuPopup.IsOpen = false;
             return;
         }
         
@@ -161,21 +168,24 @@ public partial class MainWindow : Window
         if (MenuPopup.IsOpen)
         {
             MenuPopup.IsOpen = false;
-            MouseHook.Start(); // Resume hook
         }
         else
         {
-            MouseHook.Stop(); // Pause hook while menu is open
             UpdateAutoStartCheckbox();
             MenuPopup.IsOpen = true;
         }
         e.Handled = true;
     }
     
+    // Prevent menu from closing when clicking inside it
+    private void MenuBorder_MouseDown(object sender, MouseButtonEventArgs e)
+    {
+        e.Handled = true;
+    }
+    
     private void MenuSettings_Click(object sender, MouseButtonEventArgs e)
     {
         MenuPopup.IsOpen = false;
-        MouseHook.Start();
         e.Handled = true;
         Dispatcher.BeginInvoke(() => OpenSettings());
     }
@@ -183,7 +193,6 @@ public partial class MainWindow : Window
     private void MenuChangePosition_Click(object sender, MouseButtonEventArgs e)
     {
         MenuPopup.IsOpen = false;
-        MouseHook.Start();
         e.Handled = true;
         Dispatcher.BeginInvoke(() => EnterMoveMode());
     }
@@ -201,7 +210,6 @@ public partial class MainWindow : Window
     private void MenuAbout_Click(object sender, MouseButtonEventArgs e)
     {
         MenuPopup.IsOpen = false;
-        MouseHook.Start();
         e.Handled = true;
         Dispatcher.BeginInvoke(() =>
         {

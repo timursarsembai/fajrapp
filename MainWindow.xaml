@@ -182,13 +182,14 @@
     <Popup x:Name="MenuPopup" 
            Placement="Top" 
            PlacementTarget="{Binding ElementName=MainBorder}"
-           StaysOpen="False"
+           StaysOpen="True"
            AllowsTransparency="True"
            PopupAnimation="Fade">
         <Border Background="#E8202020"
                 CornerRadius="8"
                 Margin="8"
-                MinWidth="200">
+                MinWidth="200"
+                MouseLeftButtonDown="MenuBorder_MouseDown">
             <Border.Effect>
                 <DropShadowEffect Color="Black" BlurRadius="20" ShadowDepth="4" Opacity="0.5"/>
             </Border.Effect>
