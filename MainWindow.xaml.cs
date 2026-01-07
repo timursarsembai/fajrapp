@@ -60,6 +60,41 @@ public partial class MainWindow : Window
         // Subscribe to language changes
         LocalizationService.LanguageChanged += UpdateLocalization;
         UpdateLocalization();
+        
+        // Subscribe to global mouse hook for closing popups
+        MouseHook.MouseDown += OnGlobalMouseDown;
+        MouseHook.Start();
+        
+        Closed += (s, e) => MouseHook.Stop();
+    }
+    
+    private void OnGlobalMouseDown(Point screenPoint)
+    {
+        // Check if click is outside widget bounds
+        var widgetRect = new Rect(Left, Top, ActualWidth, ActualHeight);
+        
+        if (!widgetRect.Contains(screenPoint))
+        {
+            // Close menu if open
+            if (MenuPopup.IsOpen)
+            {
+                MenuPopup.IsOpen = false;
+            }
+            
+            // Close prayer times window if open
+            if (_prayerTimesWindow != null && _prayerTimesWindow.IsVisible)
+            {
+                // Check if click is inside prayer window
+                var prayerRect = new Rect(_prayerTimesWindow.Left, _prayerTimesWindow.Top, 
+                    _prayerTimesWindow.ActualWidth, _prayerTimesWindow.ActualHeight);
+                
+                if (!prayerRect.Contains(screenPoint))
+                {
+                    _prayerTimesWindow.Close();
+                    _prayerTimesWindow = null;
+                }
+            }
+        }
     }
     
     private void UpdateLocalization()
@@ -114,13 +149,15 @@ public partial class MainWindow : Window
     private void MenuSettings_Click(object sender, MouseButtonEventArgs e)
     {
         MenuPopup.IsOpen = false;
-        OpenSettings();
+        e.Handled = true;
+        Dispatcher.BeginInvoke(() => OpenSettings());
     }
     
     private void MenuChangePosition_Click(object sender, MouseButtonEventArgs e)
     {
         MenuPopup.IsOpen = false;
-        EnterMoveMode();
+        e.Handled = true;
+        Dispatcher.BeginInvoke(() => EnterMoveMode());
     }
     
     private void MenuAutoStart_Click(object sender, MouseButtonEventArgs e)
@@ -130,19 +167,26 @@ public partial class MainWindow : Window
         _settings.AutoStart = !isEnabled;
         SettingsService.Save(_settings);
         UpdateAutoStartCheckbox();
+        e.Handled = true;
     }
     
     private void MenuAbout_Click(object sender, MouseButtonEventArgs e)
     {
         MenuPopup.IsOpen = false;
-        var aboutWindow = new AboutWindow();
-        aboutWindow.ShowDialog();
+        e.Handled = true;
+        Dispatcher.BeginInvoke(() =>
+        {
+            var aboutWindow = new AboutWindow();
+            aboutWindow.ShowDialog();
+        });
     }
     
     private void MenuExit_Click(object sender, MouseButtonEventArgs e)
     {
         MenuPopup.IsOpen = false;
+        e.Handled = true;
         _timer.Stop();
+        MouseHook.Stop();
         VirtualDesktopHelper.StopMonitoring();
         Application.Current.Shutdown();
     }
@@ -186,6 +230,13 @@ public partial class MainWindow : Window
     
     private void MainWindow_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
     {
+        // Close menu if open
+        if (MenuPopup.IsOpen)
+        {
+            MenuPopup.IsOpen = false;
+            return;
+        }
+        
         // In move mode - start dragging or finish move mode
         if (_isInMoveMode)
         {
