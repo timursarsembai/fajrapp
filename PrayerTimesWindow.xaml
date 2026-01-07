@@ -4,11 +4,13 @@
         Title="Времена молитв"
         Width="320"
         Height="380"
-        WindowStartupLocation="CenterScreen"
+        WindowStartupLocation="Manual"
         ResizeMode="NoResize"
         Background="#1E1E1E"
         WindowStyle="None"
-        AllowsTransparency="True">
+        AllowsTransparency="True"
+        Topmost="True"
+        ShowInTaskbar="False">
     
     <Window.Resources>
         <Style TargetType="TextBlock">

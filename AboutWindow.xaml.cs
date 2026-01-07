@@ -1,5 +1,5 @@
+using System;
 using System.Diagnostics;
-using System.Reflection;
 using System.Windows;
 using System.Windows.Input;
 
@@ -10,6 +10,8 @@ public partial class AboutWindow : Window
     public const string AppVersion = "1.0.0";
     public const string UpdateDate = "7 января 2026";
     public const string GitHubUrl = "https://github.com/timursarsembai/fajrapp";
+    
+    private bool _isClosing = false;
     
     public AboutWindow()
     {
@@ -22,7 +24,7 @@ public partial class AboutWindow : Window
         KeyDown += (s, e) =>
         {
             if (e.Key == Key.Escape)
-                Close();
+                SafeClose();
         };
         
         // Allow dragging
@@ -33,12 +35,30 @@ public partial class AboutWindow : Window
         };
         
         // Close when deactivated
-        Deactivated += (s, e) => Close();
+        Deactivated += (s, e) => SafeClose();
+    }
+    
+    private void SafeClose()
+    {
+        if (_isClosing) return;
+        _isClosing = true;
+        
+        Dispatcher.BeginInvoke(new Action(() =>
+        {
+            try
+            {
+                Close();
+            }
+            catch
+            {
+                // Ignore close errors
+            }
+        }), System.Windows.Threading.DispatcherPriority.Background);
     }
     
     private void CloseButton_Click(object sender, RoutedEventArgs e)
     {
-        Close();
+        SafeClose();
     }
     
     private void GitHubButton_Click(object sender, RoutedEventArgs e)

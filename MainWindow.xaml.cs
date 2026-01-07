@@ -1,6 +1,7 @@
 using System;
 using System.Windows;
 using System.Windows.Input;
+using System.Windows.Media.Animation;
 using System.Windows.Threading;
 using FajrApp.Helpers;
 using FajrApp.Models;
@@ -14,6 +15,13 @@ public partial class MainWindow : Window
     private readonly PrayerService _prayerService;
     private PrayerTimes? _currentTimes;
     private AppSettings _settings;
+    private PrayerTimesWindow? _prayerTimesWindow;
+    
+    // Move mode state
+    private bool _isInMoveMode;
+    private bool _isDragging;
+    private Point _dragStartPoint;
+    private double _dragStartLeft;
     
     public MainWindow()
     {
@@ -32,8 +40,11 @@ public partial class MainWindow : Window
         // Setup window events
         Loaded += MainWindow_Loaded;
         MouseLeftButtonDown += MainWindow_MouseLeftButtonDown;
+        MouseLeftButtonUp += MainWindow_MouseLeftButtonUp;
+        MouseMove += MainWindow_MouseMove;
         SizeChanged += MainWindow_SizeChanged;
         SourceInitialized += MainWindow_SourceInitialized;
+        KeyDown += MainWindow_KeyDown;
         
         // Initialize autostart menu item
         AutoStartMenuItem.IsChecked = AutoStartHelper.IsAutoStartEnabled();
@@ -60,10 +71,10 @@ public partial class MainWindow : Window
         // Load prayer times
         _ = LoadPrayerTimesAsync();
         
-        // Position after content is loaded
+        // Position after content is loaded with saved offset
         Dispatcher.BeginInvoke(new Action(() =>
         {
-            TaskbarPositioner.PositionWindow(this);
+            TaskbarPositioner.PositionWindow(this, _settings.WidgetOffsetX);
         }), DispatcherPriority.Loaded);
         
         // Start timer
@@ -75,26 +86,111 @@ public partial class MainWindow : Window
     
     private void MainWindow_SizeChanged(object sender, SizeChangedEventArgs e)
     {
-        // Reposition when size changes
-        if (IsLoaded && Left > -500)
+        // Reposition when size changes (unless in move mode)
+        if (IsLoaded && Left > -500 && !_isInMoveMode)
         {
-            TaskbarPositioner.PositionWindow(this);
+            TaskbarPositioner.PositionWindow(this, _settings.WidgetOffsetX);
         }
     }
     
     private void MainWindow_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
     {
-        // Show prayer times window on click
+        // In move mode - start dragging or finish move mode
+        if (_isInMoveMode)
+        {
+            if (!_isDragging)
+            {
+                // Start dragging - use screen coordinates to avoid jitter
+                _isDragging = true;
+                _dragStartPoint = PointToScreen(e.GetPosition(this));
+                _dragStartLeft = Left;
+                CaptureMouse();
+                Cursor = Cursors.SizeWE;
+            }
+            return;
+        }
+        
+        // Normal mode - toggle prayer times window on click
+        if (_prayerTimesWindow != null && _prayerTimesWindow.IsVisible)
+        {
+            // Close existing window
+            _prayerTimesWindow.Close();
+            _prayerTimesWindow = null;
+            return;
+        }
+        
         if (_currentTimes != null)
         {
-            var prayerWindow = new PrayerTimesWindow(_currentTimes, _settings);
-            prayerWindow.ShowDialog();
+            // Get widget position to position popup above it
+            var widgetRect = new Rect(Left, Top, ActualWidth, ActualHeight);
             
-            // Check if settings were requested
-            if (prayerWindow.SettingsRequested)
+            _prayerTimesWindow = new PrayerTimesWindow(_currentTimes, _settings, widgetRect);
+            _prayerTimesWindow.Closed += (s, args) => _prayerTimesWindow = null;
+            _prayerTimesWindow.Show();
+            
+            // Check if settings were requested after window closes
+            _prayerTimesWindow.Closed += (s, args) =>
             {
-                OpenSettings();
-            }
+                if (_prayerTimesWindow?.SettingsRequested == true)
+                {
+                    OpenSettings();
+                }
+            };
+        }
+    }
+    
+    private void MainWindow_MouseLeftButtonUp(object sender, MouseButtonEventArgs e)
+    {
+        if (_isDragging)
+        {
+            _isDragging = false;
+            ReleaseMouseCapture();
+            Cursor = Cursors.Arrow;
+            
+            // Calculate and save offset
+            CalculateAndSaveOffset();
+            
+            // Exit move mode
+            ExitMoveMode();
+        }
+    }
+    
+    private void MainWindow_MouseMove(object sender, MouseEventArgs e)
+    {
+        if (_isDragging && _isInMoveMode)
+        {
+            // Use screen coordinates to avoid jitter
+            var currentScreenPos = PointToScreen(e.GetPosition(this));
+            var deltaX = currentScreenPos.X - _dragStartPoint.X;
+            
+            // Move widget horizontally along taskbar
+            var newLeft = _dragStartLeft + deltaX;
+            
+            // Constrain to screen bounds
+            var screenWidth = SystemParameters.PrimaryScreenWidth;
+            newLeft = Math.Max(10, Math.Min(newLeft, screenWidth - ActualWidth - 10));
+            
+            Left = newLeft;
+            
+            // Update drag start for smooth continuous dragging
+            _dragStartPoint = currentScreenPos;
+            _dragStartLeft = Left;
+        }
+    }
+    
+    private void MainWindow_KeyDown(object sender, KeyEventArgs e)
+    {
+        // Escape to cancel move mode
+        if (e.Key == Key.Escape && _isInMoveMode)
+        {
+            _isDragging = false;
+            ReleaseMouseCapture();
+            Cursor = Cursors.Arrow;
+            
+            // Reset to original position
+            TaskbarPositioner.PositionWindow(this, _settings.WidgetOffsetX);
+            
+            ExitMoveMode();
         }
     }
     
@@ -210,6 +306,72 @@ public partial class MainWindow : Window
     {
         var aboutWindow = new AboutWindow();
         aboutWindow.ShowDialog();
+    }
+    
+    private void MovePosition_Click(object sender, RoutedEventArgs e)
+    {
+        EnterMoveMode();
+    }
+    
+    private void EnterMoveMode()
+    {
+        _isInMoveMode = true;
+        Cursor = Cursors.SizeWE;
+        
+        // Show visual feedback
+        MoveTooltip.Visibility = Visibility.Visible;
+        
+        // Start pulse animation
+        var pulseAnimation = (Storyboard)FindResource("PulseAnimation");
+        pulseAnimation.Begin();
+    }
+    
+    private void ExitMoveMode()
+    {
+        _isInMoveMode = false;
+        _isDragging = false;
+        Cursor = Cursors.Arrow;
+        
+        // Hide visual feedback
+        MoveTooltip.Visibility = Visibility.Collapsed;
+        MoveModeGlow.Opacity = 0;
+        
+        // Stop pulse animation
+        var pulseAnimation = (Storyboard)FindResource("PulseAnimation");
+        pulseAnimation.Stop();
+        
+        // Play landing animation
+        var landingAnimation = (Storyboard)FindResource("LandingAnimation");
+        landingAnimation.Begin();
+    }
+    
+    private void CalculateAndSaveOffset()
+    {
+        // Get the default position without offset
+        var taskbarRect = TaskbarPositioner.GetTaskbarRect();
+        var trayRect = TaskbarPositioner.GetTrayNotifyRect();
+        
+        // Get DPI
+        var source = PresentationSource.FromVisual(this);
+        double dpiX = 1.0;
+        if (source?.CompositionTarget != null)
+        {
+            dpiX = source.CompositionTarget.TransformToDevice.M11;
+        }
+        
+        double defaultX;
+        if (trayRect.HasValue)
+        {
+            defaultX = (trayRect.Value.Left - ActualWidth * dpiX - 8) / dpiX;
+        }
+        else
+        {
+            defaultX = (taskbarRect.Right - ActualWidth * dpiX - 150) / dpiX;
+        }
+        
+        // Calculate offset from default position
+        _settings.WidgetOffsetX = Left - defaultX;
+        SettingsService.Save(_settings);
     }
     
     private void Exit_Click(object sender, RoutedEventArgs e)

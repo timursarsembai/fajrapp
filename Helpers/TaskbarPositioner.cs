@@ -119,7 +119,7 @@ public static class TaskbarPositioner
         return null;
     }
     
-    public static void PositionWindow(Window window)
+    public static void PositionWindow(Window window, double offsetX = 0)
     {
         var taskbarRect = GetTaskbarRect();
         var trayRect = GetTrayNotifyRect();
@@ -160,6 +160,9 @@ public static class TaskbarPositioner
                     x = (taskbarRect.Right - windowWidth * dpiX - 150) / dpiX;
                 }
                 
+                // Apply offset
+                x += offsetX;
+                
                 window.Left = x;
                 window.Top = y;
                 break;
@@ -179,6 +182,9 @@ public static class TaskbarPositioner
                 {
                     x = (taskbarRect.Right - windowWidth * dpiX - 150) / dpiX;
                 }
+                
+                // Apply offset
+                x += offsetX;
                 
                 window.Left = x;
                 window.Top = y;

@@ -12,15 +12,17 @@ public partial class PrayerTimesWindow : Window
 {
     private readonly PrayerTimes _times;
     private readonly AppSettings _settings;
+    private readonly Rect _widgetRect;
     
     public bool SettingsRequested { get; private set; }
     
-    public PrayerTimesWindow(PrayerTimes times, AppSettings settings)
+    public PrayerTimesWindow(PrayerTimes times, AppSettings settings, Rect widgetRect)
     {
         InitializeComponent();
         
         _times = times;
         _settings = settings;
+        _widgetRect = widgetRect;
         
         // Allow dragging the window
         MouseLeftButtonDown += (s, e) =>
@@ -33,14 +35,14 @@ public partial class PrayerTimesWindow : Window
         KeyDown += (s, e) =>
         {
             if (e.Key == Key.Escape)
-                Close();
+                SafeClose();
         };
         
         // Close when clicked outside (deactivated)
         Deactivated += (s, e) =>
         {
             if (!SettingsRequested)
-                Close();
+                SafeClose();
         };
         
         Loaded += PrayerTimesWindow_Loaded;
@@ -57,71 +59,64 @@ public partial class PrayerTimesWindow : Window
     private void PositionNearTaskbar()
     {
         var taskbarRect = TaskbarPositioner.GetTaskbarRect();
-        var trayRect = TaskbarPositioner.GetTrayNotifyRect();
         var position = TaskbarPositioner.GetTaskbarPosition();
         
         double windowWidth = ActualWidth;
         double windowHeight = ActualHeight;
         
+        // Position relative to widget
         switch (position)
         {
             case TaskbarPositioner.TaskbarPosition.Bottom:
             {
-                // Position above taskbar, near the tray area
-                double x;
-                if (trayRect.HasValue)
-                {
-                    // Align right edge with tray area
-                    x = trayRect.Value.Right - windowWidth - 10;
-                }
-                else
-                {
-                    x = SystemParameters.PrimaryScreenWidth - windowWidth - 20;
-                }
+                // Position above widget, centered on it
+                double x = _widgetRect.Left + (_widgetRect.Width / 2) - (windowWidth / 2);
+                double y = _widgetRect.Top - windowHeight - 10;
                 
-                double y = taskbarRect.Top - windowHeight - 10;
+                // Keep on screen
+                x = Math.Max(10, Math.Min(x, SystemParameters.PrimaryScreenWidth - windowWidth - 10));
                 
-                Left = Math.Max(10, x);
+                Left = x;
                 Top = y;
                 break;
             }
             
             case TaskbarPositioner.TaskbarPosition.Top:
             {
-                double x;
-                if (trayRect.HasValue)
-                {
-                    x = trayRect.Value.Right - windowWidth - 10;
-                }
-                else
-                {
-                    x = SystemParameters.PrimaryScreenWidth - windowWidth - 20;
-                }
+                // Position below widget, centered on it
+                double x = _widgetRect.Left + (_widgetRect.Width / 2) - (windowWidth / 2);
+                double y = _widgetRect.Bottom + 10;
                 
-                double y = taskbarRect.Bottom + 10;
+                x = Math.Max(10, Math.Min(x, SystemParameters.PrimaryScreenWidth - windowWidth - 10));
                 
-                Left = Math.Max(10, x);
+                Left = x;
                 Top = y;
                 break;
             }
             
             case TaskbarPositioner.TaskbarPosition.Right:
             {
-                double x = taskbarRect.Left - windowWidth - 10;
-                double y = SystemParameters.PrimaryScreenHeight - windowHeight - 60;
+                // Position to the left of widget
+                double x = _widgetRect.Left - windowWidth - 10;
+                double y = _widgetRect.Top + (_widgetRect.Height / 2) - (windowHeight / 2);
+                
+                y = Math.Max(10, Math.Min(y, SystemParameters.PrimaryScreenHeight - windowHeight - 10));
                 
                 Left = x;
-                Top = Math.Max(10, y);
+                Top = y;
                 break;
             }
             
             case TaskbarPositioner.TaskbarPosition.Left:
             {
-                double x = taskbarRect.Right + 10;
-                double y = SystemParameters.PrimaryScreenHeight - windowHeight - 60;
+                // Position to the right of widget
+                double x = _widgetRect.Right + 10;
+                double y = _widgetRect.Top + (_widgetRect.Height / 2) - (windowHeight / 2);
+                
+                y = Math.Max(10, Math.Min(y, SystemParameters.PrimaryScreenHeight - windowHeight - 10));
                 
                 Left = x;
-                Top = Math.Max(10, y);
+                Top = y;
                 break;
             }
             
@@ -218,11 +213,32 @@ public partial class PrayerTimesWindow : Window
     private void SettingsButton_Click(object sender, RoutedEventArgs e)
     {
         SettingsRequested = true;
-        Close();
+        SafeClose();
     }
     
     private void CloseButton_Click(object sender, RoutedEventArgs e)
     {
-        Close();
+        SafeClose();
+    }
+    
+    private bool _isClosing = false;
+    
+    private void SafeClose()
+    {
+        if (_isClosing) return;
+        _isClosing = true;
+        
+        // Use Dispatcher to close safely, avoiding the "Cannot set Visibility" error
+        Dispatcher.BeginInvoke(new Action(() =>
+        {
+            try
+            {
+                Close();
+            }
+            catch
+            {
+                // Ignore close errors
+            }
+        }), System.Windows.Threading.DispatcherPriority.Background);
     }
 }

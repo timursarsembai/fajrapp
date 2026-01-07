@@ -16,6 +16,9 @@ public class AppSettings
     public bool UseGeolocation { get; set; } = true;
     public bool AutoStart { get; set; } = true;
     
+    // Widget position offset from default (in pixels)
+    public double WidgetOffsetX { get; set; } = 0;
+    
     // Time offsets in minutes
     public int FajrOffset { get; set; } = 0;
     public int SunriseOffset { get; set; } = 0;

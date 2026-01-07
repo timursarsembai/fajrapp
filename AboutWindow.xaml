@@ -3,12 +3,14 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         Title="О приложении"
         Width="400"
-        Height="300"
+        Height="380"
         WindowStartupLocation="CenterScreen"
         ResizeMode="NoResize"
         Background="#1E1E1E"
         WindowStyle="None"
-        AllowsTransparency="True">
+        AllowsTransparency="True"
+        Topmost="True"
+        ShowInTaskbar="False">
     
     <Window.Resources>
         <Style TargetType="TextBlock">

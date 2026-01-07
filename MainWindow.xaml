@@ -44,6 +44,24 @@
             <Setter Property="FontWeight" Value="Medium"/>
             <Setter Property="Opacity" Value="0.9"/>
         </Style>
+        
+        <!-- Pulsing animation for move mode -->
+        <Storyboard x:Key="PulseAnimation" RepeatBehavior="Forever">
+            <DoubleAnimation Storyboard.TargetName="MoveModeGlow"
+                           Storyboard.TargetProperty="Opacity"
+                           From="0.3" To="0.8" Duration="0:0:0.6"
+                           AutoReverse="True"/>
+        </Storyboard>
+        
+        <!-- Landing animation -->
+        <Storyboard x:Key="LandingAnimation">
+            <DoubleAnimation Storyboard.TargetName="MainBorderScale"
+                           Storyboard.TargetProperty="ScaleX"
+                           From="1.05" To="1" Duration="0:0:0.15"/>
+            <DoubleAnimation Storyboard.TargetName="MainBorderScale"
+                           Storyboard.TargetProperty="ScaleY"
+                           From="1.05" To="1" Duration="0:0:0.15"/>
+        </Storyboard>
     </Window.Resources>
     
     <Border x:Name="MainBorder"
@@ -52,16 +70,21 @@
             Padding="12,0"
             Margin="2"
             Height="32"
-            VerticalAlignment="Center">
+            VerticalAlignment="Center"
+            RenderTransformOrigin="0.5,0.5">
+        <Border.RenderTransform>
+            <ScaleTransform x:Name="MainBorderScale" ScaleX="1" ScaleY="1"/>
+        </Border.RenderTransform>
         <Border.Effect>
             <DropShadowEffect Color="Black" BlurRadius="8" ShadowDepth="1" Opacity="0.3"/>
         </Border.Effect>
         
         <!-- Context Menu -->
         <Border.ContextMenu>
-            <ContextMenu>
+            <ContextMenu Placement="Top" HorizontalOffset="-50">
                 <MenuItem Header="Настройки" Click="Settings_Click"/>
                 <Separator/>
+                <MenuItem Header="Изменить положение" Click="MovePosition_Click"/>
                 <MenuItem x:Name="AutoStartMenuItem" Header="Автозапуск" IsCheckable="True" Click="AutoStart_Click"/>
                 <Separator/>
                 <MenuItem Header="Обновить" Click="Refresh_Click"/>
@@ -71,28 +94,58 @@
             </ContextMenu>
         </Border.ContextMenu>
         
-        <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
-            <!-- Current Prayer Info -->
-            <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
-                <TextBlock x:Name="NextPrayerName" 
-                           Style="{StaticResource PrayerNameStyle}" 
-                           Text="Фаджр"/>
-                <TextBlock x:Name="NextPrayerTime" 
-                           Style="{StaticResource TimeStyle}" 
-                           Margin="6,0,0,0"
-                           Text="05:30"/>
-            </StackPanel>
+        <Grid>
+            <!-- Move mode glow effect -->
+            <Border x:Name="MoveModeGlow"
+                    Background="Transparent"
+                    BorderBrush="#4CAF50"
+                    BorderThickness="2"
+                    CornerRadius="4"
+                    Margin="-12,0"
+                    Opacity="0"
+                    IsHitTestVisible="False">
+                <Border.Effect>
+                    <DropShadowEffect Color="#4CAF50" BlurRadius="15" ShadowDepth="0" Opacity="0.8"/>
+                </Border.Effect>
+            </Border>
             
-            <!-- Separator -->
-            <TextBlock Style="{StaticResource SeparatorStyle}"/>
+            <!-- Move mode tooltip -->
+            <Border x:Name="MoveTooltip"
+                    Background="#E8202020"
+                    CornerRadius="4"
+                    Padding="8,4"
+                    VerticalAlignment="Top"
+                    HorizontalAlignment="Center"
+                    Margin="0,-45,0,0"
+                    Visibility="Collapsed">
+                <TextBlock Text="⇄ Перетащите виджет | ЛКМ - готово"
+                          Foreground="#4CAF50"
+                          FontSize="11"/>
+            </Border>
             
-            <!-- Countdown -->
             <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
-                <TextBlock Style="{StaticResource CountdownLabelStyle}"/>
-                <TextBlock x:Name="Countdown" 
-                           Style="{StaticResource CountdownStyle}"
-                           Text="2:45:30"/>
+                <!-- Current Prayer Info -->
+                <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                    <TextBlock x:Name="NextPrayerName" 
+                               Style="{StaticResource PrayerNameStyle}" 
+                               Text="Фаджр"/>
+                    <TextBlock x:Name="NextPrayerTime" 
+                               Style="{StaticResource TimeStyle}" 
+                               Margin="6,0,0,0"
+                               Text="05:30"/>
+                </StackPanel>
+                
+                <!-- Separator -->
+                <TextBlock Style="{StaticResource SeparatorStyle}"/>
+                
+                <!-- Countdown -->
+                <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                    <TextBlock Style="{StaticResource CountdownLabelStyle}"/>
+                    <TextBlock x:Name="Countdown" 
+                               Style="{StaticResource CountdownStyle}"
+                               Text="2:45:30"/>
+                </StackPanel>
             </StackPanel>
-        </StackPanel>
+        </Grid>
     </Border>
 </Window>
