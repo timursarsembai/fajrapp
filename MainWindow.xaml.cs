@@ -46,6 +46,7 @@ public partial class MainWindow : Window
         SizeChanged += MainWindow_SizeChanged;
         SourceInitialized += MainWindow_SourceInitialized;
         KeyDown += MainWindow_KeyDown;
+        Deactivated += MainWindow_Deactivated;
         
         // Initialize autostart state
         UpdateAutoStartCheckbox();
@@ -84,6 +85,15 @@ public partial class MainWindow : Window
         AutoStartCheckBox.Background = isEnabled 
             ? new System.Windows.Media.SolidColorBrush(System.Windows.Media.Color.FromArgb(30, 76, 175, 80))
             : System.Windows.Media.Brushes.Transparent;
+    }
+    
+    private void MainWindow_Deactivated(object? sender, EventArgs e)
+    {
+        // Close popup when window loses focus
+        if (MenuPopup.IsOpen)
+        {
+            MenuPopup.IsOpen = false;
+        }
     }
     
     private void MainWindow_MouseRightButtonUp(object sender, MouseButtonEventArgs e)
