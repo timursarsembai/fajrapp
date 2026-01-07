@@ -73,14 +73,35 @@ public partial class MainWindow : Window
         // Check if click is outside widget bounds
         var widgetRect = new Rect(Left, Top, ActualWidth, ActualHeight);
         
-        if (!widgetRect.Contains(screenPoint))
+        // Check if menu popup is open and if click is inside it
+        if (MenuPopup.IsOpen)
         {
-            // Close menu if open
-            if (MenuPopup.IsOpen)
+            // Get popup position - it's placed above the widget
+            var popupChild = MenuPopup.Child as FrameworkElement;
+            if (popupChild != null)
+            {
+                // Get the popup's screen position
+                var popupPosition = popupChild.PointToScreen(new Point(0, 0));
+                var popupRect = new Rect(popupPosition.X, popupPosition.Y, 
+                    popupChild.ActualWidth, popupChild.ActualHeight);
+                
+                // If click is inside popup, don't close it - let the menu item handle it
+                if (popupRect.Contains(screenPoint))
+                {
+                    return;
+                }
+            }
+            
+            // Click is outside popup, close it
+            if (!widgetRect.Contains(screenPoint))
             {
                 MenuPopup.IsOpen = false;
             }
-            
+            return;
+        }
+        
+        if (!widgetRect.Contains(screenPoint))
+        {
             // Close prayer times window if open
             if (_prayerTimesWindow != null && _prayerTimesWindow.IsVisible)
             {
