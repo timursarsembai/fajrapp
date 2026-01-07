@@ -83,43 +83,43 @@ public partial class MainWindow : Window
         }
         
         // Create and show custom menu
-        var menuWindow = new MenuWindow(_isAutoStartEnabled);
-        _menuWindow = menuWindow;
-        
-        // Position menu above widget
         var widgetRect = new Rect(Left, Top, ActualWidth, ActualHeight);
-        menuWindow.PositionNear(widgetRect);
+        var menuWindow = new MenuWindow(_isAutoStartEnabled, widgetRect);
+        _menuWindow = menuWindow;
         
         menuWindow.Closed += (s, args) =>
         {
             _menuWindow = null;
             
-            // Handle menu actions
-            if (menuWindow.SettingsRequested)
+            // Handle menu actions on dispatcher to ensure UI is ready
+            Dispatcher.BeginInvoke(() =>
             {
-                OpenSettings();
-            }
-            else if (menuWindow.ChangePositionRequested)
-            {
-                EnterMoveMode();
-            }
-            else if (menuWindow.AboutRequested)
-            {
-                var aboutWindow = new AboutWindow();
-                aboutWindow.ShowDialog();
-            }
-            else if (menuWindow.ExitRequested)
-            {
-                _timer.Stop();
-                VirtualDesktopHelper.StopMonitoring();
-                Application.Current.Shutdown();
-            }
-            
-            // Update auto start state
-            if (menuWindow.AutoStartToggled)
-            {
-                _isAutoStartEnabled = AutoStartHelper.IsAutoStartEnabled();
-            }
+                if (menuWindow.SettingsRequested)
+                {
+                    OpenSettings();
+                }
+                else if (menuWindow.ChangePositionRequested)
+                {
+                    EnterMoveMode();
+                }
+                else if (menuWindow.AboutRequested)
+                {
+                    var aboutWindow = new AboutWindow();
+                    aboutWindow.ShowDialog();
+                }
+                else if (menuWindow.ExitRequested)
+                {
+                    _timer.Stop();
+                    VirtualDesktopHelper.StopMonitoring();
+                    Application.Current.Shutdown();
+                }
+                
+                // Update auto start state
+                if (menuWindow.AutoStartToggled)
+                {
+                    _isAutoStartEnabled = AutoStartHelper.IsAutoStartEnabled();
+                }
+            });
         };
         
         menuWindow.Show();

@@ -16,12 +16,15 @@ public partial class MenuWindow : Window
     public bool ExitRequested { get; private set; }
     
     private bool _isAutoStartEnabled;
+    private Rect _widgetRect;
+    private bool _isClosing;
     
-    public MenuWindow(bool isAutoStartEnabled)
+    public MenuWindow(bool isAutoStartEnabled, Rect widgetRect)
     {
         InitializeComponent();
         
         _isAutoStartEnabled = isAutoStartEnabled;
+        _widgetRect = widgetRect;
         
         // Update auto start checkbox
         UpdateAutoStartCheckbox();
@@ -54,28 +57,30 @@ public partial class MenuWindow : Window
         // Pin to all virtual desktops
         VirtualDesktopHelper.PinToAllDesktops(this);
         
+        // Position menu now that we know its size
+        PositionAboveWidget();
+        
         // Start fade in animation
         var animation = (Storyboard)FindResource("FadeInAnimation");
         animation.Begin();
     }
     
-    public void PositionNear(Rect widgetRect)
+    private void PositionAboveWidget()
     {
-        // Measure content
-        Measure(new Size(double.PositiveInfinity, double.PositiveInfinity));
-        var menuSize = DesiredSize;
+        // Now we have actual size
+        var menuWidth = ActualWidth;
+        var menuHeight = ActualHeight;
         
-        // Position above widget, centered
-        var left = widgetRect.Left + (widgetRect.Width / 2) - (menuSize.Width / 2);
-        var top = widgetRect.Top - menuSize.Height;
+        // Position above widget, centered horizontally
+        var left = _widgetRect.Left + (_widgetRect.Width / 2) - (menuWidth / 2);
+        var top = _widgetRect.Top - menuHeight - 8; // 8px gap above widget
         
         // Ensure visible on screen
         var screenWidth = SystemParameters.PrimaryScreenWidth;
-        var screenHeight = SystemParameters.PrimaryScreenHeight;
         
         if (left < 8) left = 8;
-        if (left + menuSize.Width > screenWidth - 8) left = screenWidth - menuSize.Width - 8;
-        if (top < 8) top = widgetRect.Bottom + 8; // Show below if no space above
+        if (left + menuWidth > screenWidth - 8) left = screenWidth - menuWidth - 8;
+        if (top < 8) top = _widgetRect.Bottom + 8; // Show below if no space above
         
         Left = left;
         Top = top;
@@ -83,20 +88,29 @@ public partial class MenuWindow : Window
     
     private void Window_Deactivated(object sender, EventArgs e)
     {
-        // Close when clicking elsewhere
+        // Close when clicking elsewhere (but not if we're already closing from a menu item)
+        if (!_isClosing)
+        {
+            Close();
+        }
+    }
+    
+    private void SafeClose()
+    {
+        _isClosing = true;
         Close();
     }
     
     private void Settings_Click(object sender, MouseButtonEventArgs e)
     {
         SettingsRequested = true;
-        Close();
+        SafeClose();
     }
     
     private void ChangePosition_Click(object sender, MouseButtonEventArgs e)
     {
         ChangePositionRequested = true;
-        Close();
+        SafeClose();
     }
     
     private void AutoStart_Click(object sender, MouseButtonEventArgs e)
@@ -115,12 +129,12 @@ public partial class MenuWindow : Window
     private void About_Click(object sender, MouseButtonEventArgs e)
     {
         AboutRequested = true;
-        Close();
+        SafeClose();
     }
     
     private void Exit_Click(object sender, MouseButtonEventArgs e)
     {
         ExitRequested = true;
-        Close();
+        SafeClose();
     }
 }
