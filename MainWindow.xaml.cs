@@ -124,18 +124,21 @@ public partial class MainWindow : Window
             // Get widget position to position popup above it
             var widgetRect = new Rect(Left, Top, ActualWidth, ActualHeight);
             
-            _prayerTimesWindow = new PrayerTimesWindow(_currentTimes, _settings, widgetRect);
-            _prayerTimesWindow.Closed += (s, args) => _prayerTimesWindow = null;
-            _prayerTimesWindow.Show();
+            var prayerWindow = new PrayerTimesWindow(_currentTimes, _settings, widgetRect);
+            _prayerTimesWindow = prayerWindow;
             
-            // Check if settings were requested after window closes
-            _prayerTimesWindow.Closed += (s, args) =>
+            prayerWindow.Closed += (s, args) =>
             {
-                if (_prayerTimesWindow?.SettingsRequested == true)
+                _prayerTimesWindow = null;
+                
+                // Check if settings were requested
+                if (prayerWindow.SettingsRequested)
                 {
                     OpenSettings();
                 }
             };
+            
+            prayerWindow.Show();
         }
     }
     

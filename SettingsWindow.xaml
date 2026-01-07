@@ -6,7 +6,9 @@
         Height="600"
         WindowStartupLocation="CenterScreen"
         ResizeMode="NoResize"
-        Background="#1E1E1E">
+        Background="#1E1E1E"
+        Topmost="True"
+        ShowInTaskbar="False">
     
     <Window.Resources>
         <Style TargetType="TextBlock">
