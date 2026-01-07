@@ -20,6 +20,10 @@ public partial class AboutWindow : Window
         
         UpdateLocalization();
         
+        // Apply theme after window is loaded
+        var settings = Services.SettingsService.Load();
+        Loaded += (s, e) => Helpers.ThemeManager.ApplyTheme(this, settings);
+        
         // Close on Escape
         KeyDown += (s, e) =>
         {

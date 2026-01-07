@@ -27,6 +27,9 @@ public partial class PrayerTimesWindow : Window
         // Update localized texts
         UpdateLocalization();
         
+        // Apply theme after window is loaded
+        Loaded += (s, e) => Helpers.ThemeManager.ApplyTheme(this, _settings);
+        
         // Allow dragging the window
         MouseLeftButtonDown += (s, e) =>
         {

@@ -186,7 +186,8 @@
            StaysOpen="True"
            AllowsTransparency="True"
            PopupAnimation="Fade">
-        <Border Background="#E8202020"
+        <Border x:Name="MenuBorder"
+                Background="#E8202020"
                 CornerRadius="8"
                 Margin="8"
                 MinWidth="200"
@@ -199,7 +200,7 @@
                 <!-- Settings -->
                 <Border Style="{StaticResource MenuItemStyle}" MouseLeftButtonUp="MenuSettings_Click">
                     <StackPanel Orientation="Horizontal">
-                        <TextBlock Text="&#xE713;" Style="{StaticResource MenuIconStyle}"/>
+                        <TextBlock x:Name="MenuSettingsIcon" Text="&#xE713;" Style="{StaticResource MenuIconStyle}"/>
                         <TextBlock x:Name="MenuSettingsText" Text="Settings" Style="{StaticResource MenuTextStyle}"/>
                     </StackPanel>
                 </Border>
@@ -210,7 +211,7 @@
                 <!-- Change Position -->
                 <Border Style="{StaticResource MenuItemStyle}" MouseLeftButtonUp="MenuChangePosition_Click">
                     <StackPanel Orientation="Horizontal">
-                        <TextBlock Text="&#xE8AB;" Style="{StaticResource MenuIconStyle}"/>
+                        <TextBlock x:Name="MenuChangePositionIcon" Text="&#xE8AB;" Style="{StaticResource MenuIconStyle}"/>
                         <TextBlock x:Name="MenuChangePositionText" Text="Change position" Style="{StaticResource MenuTextStyle}"/>
                     </StackPanel>
                 </Border>
@@ -238,7 +239,7 @@
                 <!-- Support Project -->
                 <Border Style="{StaticResource MenuItemStyle}" MouseLeftButtonUp="MenuSupportProject_Click">
                     <StackPanel Orientation="Horizontal">
-                        <TextBlock Text="&#xE8EC;" Style="{StaticResource MenuIconStyle}"/>
+                        <TextBlock x:Name="MenuSupportProjectIcon" Text="&#xE8EC;" Style="{StaticResource MenuIconStyle}"/>
                         <TextBlock x:Name="MenuSupportProjectText" Text="Support the project" Style="{StaticResource MenuTextStyle}"/>
                     </StackPanel>
                 </Border>
@@ -246,7 +247,7 @@
                 <!-- About -->
                 <Border Style="{StaticResource MenuItemStyle}" MouseLeftButtonUp="MenuAbout_Click">
                     <StackPanel Orientation="Horizontal">
-                        <TextBlock Text="&#xE946;" Style="{StaticResource MenuIconStyle}"/>
+                        <TextBlock x:Name="MenuAboutIcon" Text="&#xE946;" Style="{StaticResource MenuIconStyle}"/>
                         <TextBlock x:Name="MenuAboutText" Text="About" Style="{StaticResource MenuTextStyle}"/>
                     </StackPanel>
                 </Border>
@@ -257,7 +258,7 @@
                 <!-- Exit -->
                 <Border Style="{StaticResource MenuItemStyle}" MouseLeftButtonUp="MenuExit_Click">
                     <StackPanel Orientation="Horizontal">
-                        <TextBlock Text="&#xE7E8;" Style="{StaticResource MenuIconStyle}"/>
+                        <TextBlock x:Name="MenuExitIcon" Text="&#xE7E8;" Style="{StaticResource MenuIconStyle}"/>
                         <TextBlock x:Name="MenuExitText" Text="Exit" Style="{StaticResource MenuTextStyle}"/>
                     </StackPanel>
                 </Border>

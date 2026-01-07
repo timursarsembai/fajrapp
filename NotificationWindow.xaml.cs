@@ -20,6 +20,10 @@ public partial class NotificationWindow : Window
         PrayerNameText.Text = prayerName;
         PrayerTimeText.Text = prayerTime;
         
+        // Apply theme after window is loaded
+        var settings = Services.SettingsService.Load();
+        Loaded += (s, e) => Helpers.ThemeManager.ApplyTheme(this, settings);
+        
         // Position in bottom-right corner
         Loaded += NotificationWindow_Loaded;
         

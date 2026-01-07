@@ -7,16 +7,35 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
+using System.Windows.Media;
 using FajrApp.Models;
 using FajrApp.Services;
 
 namespace FajrApp;
+
+public class CitySearchResult
+{
+    public double Latitude { get; set; }
+    public double Longitude { get; set; }
+    public string City { get; set; } = "";
+    public string State { get; set; } = "";
+    public string Country { get; set; } = "";
+    
+    public string DisplayName => 
+        string.IsNullOrEmpty(State) 
+            ? $"{City}, {Country}" 
+            : $"{City}, {State}, {Country}";
+}
 
 public partial class SettingsWindow : Window
 {
     private readonly AppSettings _settings;
     private static readonly HttpClient HttpClient = new() { Timeout = TimeSpan.FromSeconds(15) };
     private bool _isInitializing = true;
+    
+    private Brush TextColor => _settings.Theme == AppTheme.Light 
+        ? new SolidColorBrush(Color.FromRgb(30, 30, 30)) 
+        : new SolidColorBrush(Color.FromRgb(224, 224, 224));
     
     // Method keys for localization
     private static readonly Dictionary<CalculationMethod, string> MethodKeys = new()
@@ -46,20 +65,361 @@ public partial class SettingsWindow : Window
         PopulateMethodComboBox();
         UpdateLocalization();
         
+        // Apply theme after window is loaded
+        Loaded += (s, e) => 
+        {
+            Helpers.ThemeManager.ApplyTheme(this, _settings);
+            ApplyTabButtonStyles();
+        };
+        
+        // Show initial tab (Language)
+        ShowTab("Language");
+        
         _isInitializing = false;
+    }
+    
+    private void ApplyTabButtonStyles()
+    {
+        var buttons = new[] { LanguageTabButton, LocationTabButton, MethodTabButton, 
+                              OffsetsTabButton, NotificationsTabButton, AppearanceTabButton };
+        
+        // Get the appropriate style based on theme
+        var styleName = _settings.Theme == AppTheme.Light ? "TabButtonStyleLight" : "TabButtonStyleDark";
+        var style = (Style)FindResource(styleName);
+        
+        foreach (var button in buttons)
+        {
+            button.Style = style;
+        }
+    }
+    
+    private void RemoveFromParent(FrameworkElement element)
+    {
+        if (element.Parent is Panel panel)
+        {
+            panel.Children.Remove(element);
+        }
+        else if (element.Parent is ContentControl cc)
+        {
+            cc.Content = null;
+        }
+        else if (element.Parent is Decorator decorator)
+        {
+            decorator.Child = null;
+        }
+    }
+    
+    private void AddToContent(FrameworkElement element)
+    {
+        RemoveFromParent(element);
+        ContentPanel.Children.Add(element);
+    }
+    
+    private void TabButton_Click(object sender, RoutedEventArgs e)
+    {
+        if (sender is Button button)
+        {
+            // Update button states
+            LanguageTabButton.Tag = null;
+            LocationTabButton.Tag = null;
+            MethodTabButton.Tag = null;
+            OffsetsTabButton.Tag = null;
+            NotificationsTabButton.Tag = null;
+            AppearanceTabButton.Tag = null;
+            
+            button.Tag = "Selected";
+            
+            // Apply correct foreground colors based on theme
+            ApplyTabButtonStyles();
+            
+            // Show corresponding content
+            var tabName = button.Name.Replace("TabButton", "");
+            ShowTab(tabName);
+        }
+    }
+    
+    private void ShowTab(string tabName)
+    {
+        ContentPanel.Children.Clear();
+        
+        switch (tabName)
+        {
+            case "Language":
+                ShowLanguageTab();
+                break;
+            case "Location":
+                ShowLocationTab();
+                break;
+            case "Method":
+                ShowMethodTab();
+                break;
+            case "Offsets":
+                ShowOffsetsTab();
+                break;
+            case "Notifications":
+                ShowNotificationsTab();
+                break;
+            case "Appearance":
+                ShowAppearanceTab();
+                break;
+        }
+    }
+    
+    private void ShowLanguageTab()
+    {
+        var header = new TextBlock
+        {
+            Text = LocalizationService.T("Language"),
+            FontSize = 18,
+            FontWeight = FontWeights.SemiBold,
+            Foreground = TextColor,
+            Margin = new Thickness(0, 0, 0, 16)
+        };
+        ContentPanel.Children.Add(header);
+        
+        var label = new TextBlock
+        {
+            Text = LocalizationService.T("Language"),
+            Foreground = TextColor,
+            Margin = new Thickness(0, 0, 0, 4)
+        };
+        ContentPanel.Children.Add(label);
+        AddToContent(LanguageComboBox);
+    }
+    
+    private void ShowLocationTab()
+    {
+        var header = new TextBlock
+        {
+            Text = LocalizationService.T("Location"),
+            FontSize = 18,
+            FontWeight = FontWeights.SemiBold,
+            Foreground = TextColor,
+            Margin = new Thickness(0, 0, 0, 16)
+        };
+        ContentPanel.Children.Add(header);
+        
+        // City search section
+        var cityLabel = new TextBlock { Text = CityLabel.Text, Foreground = TextColor, Margin = new Thickness(0, 0, 0, 4) };
+        ContentPanel.Children.Add(cityLabel);
+        
+        var searchGrid = new Grid { Margin = new Thickness(0, 0, 0, 12) };
+        searchGrid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Star) });
+        searchGrid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(8) });
+        searchGrid.ColumnDefinitions.Add(new ColumnDefinition { Width = GridLength.Auto });
+        
+        RemoveFromParent(CityTextBox);
+        RemoveFromParent(SearchButton);
+        Grid.SetColumn(CityTextBox, 0);
+        Grid.SetColumn(SearchButton, 2);
+        searchGrid.Children.Add(CityTextBox);
+        searchGrid.Children.Add(SearchButton);
+        ContentPanel.Children.Add(searchGrid);
+        
+        // Results listbox
+        AddToContent(CityResultsListBox);
+        
+        // Find location button
+        AddToContent(FindLocationButton);
+        
+        // Status text
+        AddToContent(StatusText);
+        
+        // Coordinates
+        var coordLabel = new TextBlock
+        {
+            Text = LocalizationService.T("Coordinates"),
+            FontWeight = FontWeights.SemiBold,
+            Foreground = TextColor,
+            Margin = new Thickness(0, 16, 0, 8)
+        };
+        ContentPanel.Children.Add(coordLabel);
+        
+        var coordGrid = new Grid { Margin = new Thickness(0, 0, 0, 8) };
+        coordGrid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Star) });
+        coordGrid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(12) });
+        coordGrid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Star) });
+        
+        var latStack = new StackPanel();
+        latStack.Children.Add(new TextBlock { Text = LatitudeLabel.Text, Foreground = TextColor, Margin = new Thickness(0, 0, 0, 4) });
+        RemoveFromParent(LatitudeTextBox);
+        latStack.Children.Add(LatitudeTextBox);
+        Grid.SetColumn(latStack, 0);
+        
+        var lonStack = new StackPanel();
+        lonStack.Children.Add(new TextBlock { Text = LongitudeLabel.Text, Foreground = TextColor, Margin = new Thickness(0, 0, 0, 4) });
+        RemoveFromParent(LongitudeTextBox);
+        lonStack.Children.Add(LongitudeTextBox);
+        Grid.SetColumn(lonStack, 2);
+        
+        coordGrid.Children.Add(latStack);
+        coordGrid.Children.Add(lonStack);
+        ContentPanel.Children.Add(coordGrid);
+    }
+    
+    private void ShowMethodTab()
+    {
+        var header = new TextBlock
+        {
+            Text = LocalizationService.T("CalculationMethod"),
+            FontSize = 18,
+            FontWeight = FontWeights.SemiBold,
+            Foreground = TextColor,
+            Margin = new Thickness(0, 0, 0, 16)
+        };
+        ContentPanel.Children.Add(header);
+        
+        var methodLabel = new TextBlock { Text = MethodLabel.Text, Foreground = TextColor, Margin = new Thickness(0, 0, 0, 4) };
+        ContentPanel.Children.Add(methodLabel);
+        AddToContent(MethodComboBox);
+        
+        var asrLabel = new TextBlock { Text = AsrMethodLabel.Text, Foreground = TextColor, Margin = new Thickness(0, 16, 0, 4) };
+        ContentPanel.Children.Add(asrLabel);
+        AddToContent(AsrMethodComboBox);
+    }
+    
+    private void ShowOffsetsTab()
+    {
+        var header = new TextBlock
+        {
+            Text = LocalizationService.T("TimeOffsets"),
+            FontSize = 18,
+            FontWeight = FontWeights.SemiBold,
+            Foreground = TextColor,
+            Margin = new Thickness(0, 0, 0, 16)
+        };
+        ContentPanel.Children.Add(header);
+        
+        var grid = new Grid();
+        grid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Star) });
+        grid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(12) });
+        grid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Star) });
+        grid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(12) });
+        grid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Star) });
+        grid.RowDefinitions.Add(new RowDefinition { Height = GridLength.Auto });
+        grid.RowDefinitions.Add(new RowDefinition { Height = new GridLength(8) });
+        grid.RowDefinitions.Add(new RowDefinition { Height = GridLength.Auto });
+        
+        // Row 0
+        var fajrStack = new StackPanel();
+        fajrStack.Children.Add(new TextBlock { Text = FajrLabel.Text, Foreground = TextColor, Margin = new Thickness(0, 0, 0, 4) });
+        RemoveFromParent(FajrOffsetTextBox);
+        fajrStack.Children.Add(FajrOffsetTextBox);
+        Grid.SetColumn(fajrStack, 0);
+        Grid.SetRow(fajrStack, 0);
+        
+        var sunriseStack = new StackPanel();
+        sunriseStack.Children.Add(new TextBlock { Text = SunriseLabel.Text, Foreground = TextColor, Margin = new Thickness(0, 0, 0, 4) });
+        RemoveFromParent(SunriseOffsetTextBox);
+        sunriseStack.Children.Add(SunriseOffsetTextBox);
+        Grid.SetColumn(sunriseStack, 2);
+        Grid.SetRow(sunriseStack, 0);
+        
+        var dhuhrStack = new StackPanel();
+        dhuhrStack.Children.Add(new TextBlock { Text = DhuhrLabel.Text, Foreground = TextColor, Margin = new Thickness(0, 0, 0, 4) });
+        RemoveFromParent(DhuhrOffsetTextBox);
+        dhuhrStack.Children.Add(DhuhrOffsetTextBox);
+        Grid.SetColumn(dhuhrStack, 4);
+        Grid.SetRow(dhuhrStack, 0);
+        
+        // Row 2
+        var asrStack = new StackPanel();
+        asrStack.Children.Add(new TextBlock { Text = AsrLabel.Text, Foreground = TextColor, Margin = new Thickness(0, 0, 0, 4) });
+        RemoveFromParent(AsrOffsetTextBox);
+        asrStack.Children.Add(AsrOffsetTextBox);
+        Grid.SetColumn(asrStack, 0);
+        Grid.SetRow(asrStack, 2);
+        
+        var maghribStack = new StackPanel();
+        maghribStack.Children.Add(new TextBlock { Text = MaghribLabel.Text, Foreground = TextColor, Margin = new Thickness(0, 0, 0, 4) });
+        RemoveFromParent(MaghribOffsetTextBox);
+        maghribStack.Children.Add(MaghribOffsetTextBox);
+        Grid.SetColumn(maghribStack, 2);
+        Grid.SetRow(maghribStack, 2);
+        
+        var ishaStack = new StackPanel();
+        ishaStack.Children.Add(new TextBlock { Text = IshaLabel.Text, Foreground = TextColor, Margin = new Thickness(0, 0, 0, 4) });
+        RemoveFromParent(IshaOffsetTextBox);
+        ishaStack.Children.Add(IshaOffsetTextBox);
+        Grid.SetColumn(ishaStack, 4);
+        Grid.SetRow(ishaStack, 2);
+        
+        grid.Children.Add(fajrStack);
+        grid.Children.Add(sunriseStack);
+        grid.Children.Add(dhuhrStack);
+        grid.Children.Add(asrStack);
+        grid.Children.Add(maghribStack);
+        grid.Children.Add(ishaStack);
+        
+        ContentPanel.Children.Add(grid);
+    }
+    
+    private void ShowNotificationsTab()
+    {
+        var header = new TextBlock
+        {
+            Text = LocalizationService.T("Notifications"),
+            FontSize = 18,
+            FontWeight = FontWeights.SemiBold,
+            Foreground = TextColor,
+            Margin = new Thickness(0, 0, 0, 16)
+        };
+        ContentPanel.Children.Add(header);
+        
+        AddToContent(NotificationsEnabledCheckBox);
+        
+        var soundLabel = new TextBlock { Text = NotificationSoundLabel.Text, Foreground = TextColor, Margin = new Thickness(0, 16, 0, 4) };
+        ContentPanel.Children.Add(soundLabel);
+        AddToContent(NotificationSoundComboBox);
+        
+        AddToContent(AzanHintText);
+        AddToContent(OpenSoundsFolderButton);
+    }
+    
+    private void ShowAppearanceTab()
+    {
+        var header = new TextBlock
+        {
+            Text = LocalizationService.T("Appearance"),
+            FontSize = 18,
+            FontWeight = FontWeights.SemiBold,
+            Foreground = TextColor,
+            Margin = new Thickness(0, 0, 0, 16)
+        };
+        ContentPanel.Children.Add(header);
+        
+        var themeLabel = new TextBlock { Text = ThemeLabel.Text, Foreground = TextColor, Margin = new Thickness(0, 0, 0, 4) };
+        ContentPanel.Children.Add(themeLabel);
+        AddToContent(ThemeComboBox);
+        
+        var opacityGrid = new Grid { Margin = new Thickness(0, 16, 0, 4) };
+        opacityGrid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Star) });
+        opacityGrid.ColumnDefinitions.Add(new ColumnDefinition { Width = GridLength.Auto });
+        RemoveFromParent(OpacityLabel);
+        RemoveFromParent(OpacityValueText);
+        opacityGrid.Children.Add(OpacityLabel);
+        Grid.SetColumn(OpacityValueText, 1);
+        opacityGrid.Children.Add(OpacityValueText);
+        ContentPanel.Children.Add(opacityGrid);
+        AddToContent(OpacitySlider);
     }
     
     private void UpdateLocalization()
     {
         Title = LocalizationService.T("SettingsTitle");
-        HeaderText.Text = $"⚙️ {LocalizationService.T("Settings")}";
+        
+        // Tab buttons
+        LanguageTabButton.Content = $"🌐 {LocalizationService.T("Language")}";
+        LocationTabButton.Content = $"📍 {LocalizationService.T("Location")}";
+        MethodTabButton.Content = $"🕌 {LocalizationService.T("CalculationMethod")}";
+        OffsetsTabButton.Content = $"⏱️ {LocalizationService.T("TimeOffsets")}";
+        NotificationsTabButton.Content = $"🔔 {LocalizationService.T("Notifications")}";
+        AppearanceTabButton.Content = $"🎨 {LocalizationService.T("Appearance")}";
         
         // Language section
-        LanguageSectionHeader.Text = $"🌐 {LocalizationService.T("Language")}";
         LanguageLabel.Text = LocalizationService.T("Language");
         
         // Location section
-        LocationSectionHeader.Text = $"📍 {LocalizationService.T("Location")}";
         CityLabel.Text = $"{LocalizationService.T("City")} ({LocalizationService.T("SearchCity")})";
         SearchButton.Content = $"🔍 {LocalizationService.T("Search")}";
         FindLocationButton.Content = $"📍 {LocalizationService.T("Location")}";
@@ -67,14 +427,12 @@ public partial class SettingsWindow : Window
         LongitudeLabel.Text = LocalizationService.T("Longitude");
         
         // Method section
-        MethodSectionHeader.Text = $"🕌 {LocalizationService.T("CalculationMethod")}";
         MethodLabel.Text = LocalizationService.T("CalculationMethod");
         AsrMethodLabel.Text = LocalizationService.T("AsrCalculation");
         AsrStandardItem.Content = LocalizationService.T("Standard");
         AsrHanafiItem.Content = LocalizationService.T("Hanafi");
         
         // Offsets section
-        OffsetsSectionHeader.Text = $"⏱️ {LocalizationService.T("TimeOffsets")}";
         FajrLabel.Text = LocalizationService.T("Fajr");
         SunriseLabel.Text = LocalizationService.T("Sunrise");
         DhuhrLabel.Text = LocalizationService.T("Dhuhr");
@@ -83,7 +441,6 @@ public partial class SettingsWindow : Window
         IshaLabel.Text = LocalizationService.T("Isha");
         
         // Notifications section
-        NotificationsSectionHeader.Text = $"🔔 {LocalizationService.T("Notifications")}";
         NotificationsEnabledCheckBox.Content = LocalizationService.T("EnableNotifications");
         NotificationSoundLabel.Text = LocalizationService.T("NotificationSound");
         SoundNoneItem.Content = LocalizationService.T("SoundNone");
@@ -91,6 +448,12 @@ public partial class SettingsWindow : Window
         SoundAzanItem.Content = LocalizationService.T("SoundAzan");
         AzanHintText.Text = $"💡 {LocalizationService.T("AzanHint")}";
         OpenSoundsFolderButton.Content = $"📁 {LocalizationService.T("OpenSoundsFolder")}";
+        
+        // Appearance section
+        ThemeLabel.Text = LocalizationService.T("Theme");
+        ThemeLightItem.Content = LocalizationService.T("ThemeLight");
+        ThemeDarkItem.Content = LocalizationService.T("ThemeDark");
+        OpacityLabel.Text = LocalizationService.T("WidgetOpacity");
         
         // Buttons
         CancelButton.Content = LocalizationService.T("Cancel");
@@ -150,6 +513,10 @@ public partial class SettingsWindow : Window
         // Notification settings
         NotificationsEnabledCheckBox.IsChecked = _settings.NotificationsEnabled;
         NotificationSoundComboBox.SelectedIndex = (int)_settings.NotificationSound;
+        
+        // Appearance settings
+        ThemeComboBox.SelectedIndex = (int)_settings.Theme;
+        OpacitySlider.Value = _settings.WidgetOpacity * 100;
     }
     
     private void PopulateMethodComboBox()
@@ -211,44 +578,64 @@ public partial class SettingsWindow : Window
         var cityName = CityTextBox.Text.Trim();
         if (string.IsNullOrEmpty(cityName))
         {
-            StatusText.Text = "Введите название города";
+            StatusText.Text = LocalizationService.T("EnterCityName");
             StatusText.Foreground = System.Windows.Media.Brushes.Orange;
             return;
         }
         
-        StatusText.Text = "🔍 Поиск города...";
+        StatusText.Text = LocalizationService.T("SearchingCity");
         StatusText.Foreground = System.Windows.Media.Brushes.Gray;
         
         try
         {
-            var result = await SearchCityAsync(cityName);
-            if (result.HasValue)
+            var results = await SearchCityAsync(cityName);
+            if (results.Count > 0)
             {
-                LatitudeTextBox.Text = result.Value.Lat.ToString(CultureInfo.InvariantCulture);
-                LongitudeTextBox.Text = result.Value.Lon.ToString(CultureInfo.InvariantCulture);
-                CityTextBox.Text = result.Value.DisplayName;
+                // Show results in ListBox
+                CityResultsListBox.ItemsSource = results;
+                CityResultsListBox.Visibility = Visibility.Visible;
                 
-                StatusText.Text = $"✅ Найден: {result.Value.DisplayName}";
+                StatusText.Text = string.Format(LocalizationService.T("CitiesFound"), results.Count);
                 StatusText.Foreground = System.Windows.Media.Brushes.LightGreen;
             }
             else
             {
-                StatusText.Text = "❌ Город не найден. Попробуйте другое название.";
+                CityResultsListBox.Visibility = Visibility.Collapsed;
+                StatusText.Text = LocalizationService.T("CityNotFound");
                 StatusText.Foreground = System.Windows.Media.Brushes.Orange;
             }
         }
         catch (Exception ex)
         {
-            StatusText.Text = $"❌ Ошибка поиска: {ex.Message}";
+            CityResultsListBox.Visibility = Visibility.Collapsed;
+            StatusText.Text = string.Format(LocalizationService.T("SearchError"), ex.Message);
             StatusText.Foreground = System.Windows.Media.Brushes.Red;
         }
     }
     
-    private async Task<(double Lat, double Lon, string DisplayName)?> SearchCityAsync(string cityName)
+    private void CityResultsListBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
     {
+        if (CityResultsListBox.SelectedItem is CitySearchResult result)
+        {
+            LatitudeTextBox.Text = result.Latitude.ToString(CultureInfo.InvariantCulture);
+            LongitudeTextBox.Text = result.Longitude.ToString(CultureInfo.InvariantCulture);
+            CityTextBox.Text = result.City;
+            
+            // Hide the results list
+            CityResultsListBox.Visibility = Visibility.Collapsed;
+            
+            StatusText.Text = string.Format(LocalizationService.T("CitySelected"), result.DisplayName);
+            StatusText.Foreground = System.Windows.Media.Brushes.LightGreen;
+        }
+    }
+    
+    private async Task<List<CitySearchResult>> SearchCityAsync(string cityName)
+    {
+        var results = new List<CitySearchResult>();
+        
         // Using Nominatim OpenStreetMap API for geocoding (free, no API key needed)
         var encodedCity = Uri.EscapeDataString(cityName);
-        var url = $"https://nominatim.openstreetmap.org/search?q={encodedCity}&format=json&limit=1&addressdetails=1";
+        var url = $"https://nominatim.openstreetmap.org/search?q={encodedCity}&format=json&limit=10&addressdetails=1";
         
         var request = new HttpRequestMessage(HttpMethod.Get, url);
         request.Headers.Add("User-Agent", "FajrApp/1.0 (Prayer Times Widget)");
@@ -257,25 +644,72 @@ public partial class SettingsWindow : Window
         response.EnsureSuccessStatusCode();
         
         var json = await response.Content.ReadAsStringAsync();
-        var results = JsonDocument.Parse(json);
+        var jsonResults = JsonDocument.Parse(json);
         
-        if (results.RootElement.GetArrayLength() > 0)
+        foreach (var item in jsonResults.RootElement.EnumerateArray())
         {
-            var first = results.RootElement[0];
-            var lat = double.Parse(first.GetProperty("lat").GetString()!, CultureInfo.InvariantCulture);
-            var lon = double.Parse(first.GetProperty("lon").GetString()!, CultureInfo.InvariantCulture);
-            var displayName = first.GetProperty("display_name").GetString() ?? cityName;
-            
-            // Shorten display name (take first 2-3 parts)
-            var parts = displayName.Split(',');
-            displayName = parts.Length >= 2 
-                ? $"{parts[0].Trim()}, {parts[^1].Trim()}" 
-                : parts[0].Trim();
-            
-            return (lat, lon, displayName);
+            try
+            {
+                var lat = double.Parse(item.GetProperty("lat").GetString()!, CultureInfo.InvariantCulture);
+                var lon = double.Parse(item.GetProperty("lon").GetString()!, CultureInfo.InvariantCulture);
+                
+                string city = "";
+                string state = "";
+                string country = "";
+                
+                if (item.TryGetProperty("address", out var address))
+                {
+                    // Try to get city name
+                    if (address.TryGetProperty("city", out var cityProp))
+                        city = cityProp.GetString() ?? "";
+                    else if (address.TryGetProperty("town", out var townProp))
+                        city = townProp.GetString() ?? "";
+                    else if (address.TryGetProperty("village", out var villageProp))
+                        city = villageProp.GetString() ?? "";
+                    else if (address.TryGetProperty("municipality", out var municipalityProp))
+                        city = municipalityProp.GetString() ?? "";
+                    
+                    // Get state/region
+                    if (address.TryGetProperty("state", out var stateProp))
+                        state = stateProp.GetString() ?? "";
+                    else if (address.TryGetProperty("region", out var regionProp))
+                        state = regionProp.GetString() ?? "";
+                    else if (address.TryGetProperty("county", out var countyProp))
+                        state = countyProp.GetString() ?? "";
+                    
+                    // Get country
+                    if (address.TryGetProperty("country", out var countryProp))
+                        country = countryProp.GetString() ?? "";
+                }
+                
+                // If we don't have a city name, use the first part of display_name
+                if (string.IsNullOrEmpty(city) && item.TryGetProperty("display_name", out var displayName))
+                {
+                    var parts = displayName.GetString()?.Split(',');
+                    if (parts?.Length > 0)
+                        city = parts[0].Trim();
+                }
+                
+                if (!string.IsNullOrEmpty(city) && !string.IsNullOrEmpty(country))
+                {
+                    results.Add(new CitySearchResult
+                    {
+                        Latitude = lat,
+                        Longitude = lon,
+                        City = city,
+                        State = state,
+                        Country = country
+                    });
+                }
+            }
+            catch
+            {
+                // Skip invalid results
+                continue;
+            }
         }
         
-        return null;
+        return results;
     }
     
     private async void FindLocation_Click(object sender, RoutedEventArgs e)
@@ -457,6 +891,13 @@ public partial class SettingsWindow : Window
                 _settings.NotificationSound = (NotificationSoundType)int.Parse(selectedSound.Tag?.ToString() ?? "1");
             }
             
+            // Appearance settings
+            if (ThemeComboBox.SelectedItem is ComboBoxItem selectedTheme)
+            {
+                _settings.Theme = (AppTheme)int.Parse(selectedTheme.Tag?.ToString() ?? "1");
+            }
+            _settings.WidgetOpacity = OpacitySlider.Value / 100.0;
+            
             // Clear cache when settings change
             _settings.CachedTimes = null;
             
@@ -494,6 +935,14 @@ public partial class SettingsWindow : Window
         {
             MessageBox.Show($"Error opening folder: {ex.Message}", "Error", 
                 MessageBoxButton.OK, MessageBoxImage.Error);
+        }
+    }
+    
+    private void OpacitySlider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+    {
+        if (OpacityValueText != null)
+        {
+            OpacityValueText.Text = $"{(int)e.NewValue}%";
         }
     }
 }

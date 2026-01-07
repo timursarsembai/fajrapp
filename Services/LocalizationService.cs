@@ -83,6 +83,21 @@ public static class LocalizationService
                 { "GitHub", "GitHub" },
                 { "Close", "Close" },
                 
+                // Appearance
+                { "Appearance", "Appearance" },
+                { "Theme", "Theme" },
+                { "ThemeLight", "Light" },
+                { "ThemeDark", "Dark" },
+                { "WidgetOpacity", "Widget opacity" },
+                
+                // City search
+                { "EnterCityName", "Enter city name" },
+                { "SearchingCity", "🔍 Searching for city..." },
+                { "CitiesFound", "✅ Cities found: {0}. Select the one you need." },
+                { "CityNotFound", "❌ City not found. Try a different name." },
+                { "CitySelected", "✅ Selected: {0}" },
+                { "SearchError", "❌ Search error: {0}" },
+                
                 // Donate window
                 { "DonateTitle", "Support the project" },
                 { "DonateDescription", "If you like FajrApp, you can support its development through one of the following platforms:" },
@@ -171,6 +186,21 @@ public static class LocalizationService
                 { "GitHub", "GitHub" },
                 { "Close", "Cerrar" },
                 
+                // Appearance
+                { "Appearance", "Apariencia" },
+                { "Theme", "Tema" },
+                { "ThemeLight", "Claro" },
+                { "ThemeDark", "Oscuro" },
+                { "WidgetOpacity", "Opacidad del widget" },
+                
+                // City search
+                { "EnterCityName", "Introduce el nombre de la ciudad" },
+                { "SearchingCity", "🔍 Buscando ciudad..." },
+                { "CitiesFound", "✅ Ciudades encontradas: {0}. Selecciona la que necesites." },
+                { "CityNotFound", "❌ Ciudad no encontrada. Prueba con otro nombre." },
+                { "CitySelected", "✅ Seleccionado: {0}" },
+                { "SearchError", "❌ Error de búsqueda: {0}" },
+                
                 // Donate window
                 { "DonateTitle", "Apoyar el proyecto" },
                 { "DonateDescription", "Si te gusta FajrApp, puedes apoyar su desarrollo a través de una de las siguientes plataformas:" },
@@ -257,6 +287,21 @@ public static class LocalizationService
                 { "DeveloperName", "تيمور سارسمباي" },
                 { "GitHub", "GitHub" },
                 { "Close", "إغلاق" },
+                
+                // Appearance
+                { "Appearance", "المظهر" },
+                { "Theme", "السمة" },
+                { "ThemeLight", "فاتح" },
+                { "ThemeDark", "داكن" },
+                { "WidgetOpacity", "شفافية الأداة" },
+                
+                // City search
+                { "EnterCityName", "أدخل اسم المدينة" },
+                { "SearchingCity", "🔍 البحث عن المدينة..." },
+                { "CitiesFound", "✅ تم العثور على {0} مدن. اختر المدينة المطلوبة." },
+                { "CityNotFound", "❌ لم يتم العثور على المدينة. جرب اسمًا آخر." },
+                { "CitySelected", "✅ تم الاختيار: {0}" },
+                { "SearchError", "❌ خطأ في البحث: {0}" },
                 
                 // Donate window
                 { "DonateTitle", "دعم المشروع" },
@@ -345,6 +390,21 @@ public static class LocalizationService
                 { "GitHub", "GitHub" },
                 { "Close", "Закрыть" },
                 
+                // Appearance
+                { "Appearance", "Внешний вид" },
+                { "Theme", "Тема" },
+                { "ThemeLight", "Светлая" },
+                { "ThemeDark", "Тёмная" },
+                { "WidgetOpacity", "Прозрачность виджета" },
+                
+                // City search
+                { "EnterCityName", "Введите название города" },
+                { "SearchingCity", "🔍 Поиск города..." },
+                { "CitiesFound", "✅ Найдено городов: {0}. Выберите нужный." },
+                { "CityNotFound", "❌ Город не найден. Попробуйте другое название." },
+                { "CitySelected", "✅ Выбран: {0}" },
+                { "SearchError", "❌ Ошибка поиска: {0}" },
+                
                 // Donate window
                 { "DonateTitle", "Помогите проекту" },
                 { "DonateDescription", "Если вам нравится FajrApp, вы можете поддержать его развитие через одну из следующих платформ:" },
@@ -432,6 +492,21 @@ public static class LocalizationService
                 { "GitHub", "GitHub" },
                 { "Close", "Tutup" },
                 
+                // Appearance
+                { "Appearance", "Tampilan" },
+                { "Theme", "Tema" },
+                { "ThemeLight", "Terang" },
+                { "ThemeDark", "Gelap" },
+                { "WidgetOpacity", "Transparansi widget" },
+                
+                // City search
+                { "EnterCityName", "Masukkan nama kota" },
+                { "SearchingCity", "🔍 Mencari kota..." },
+                { "CitiesFound", "✅ Kota ditemukan: {0}. Pilih yang Anda butuhkan." },
+                { "CityNotFound", "❌ Kota tidak ditemukan. Coba nama lain." },
+                { "CitySelected", "✅ Dipilih: {0}" },
+                { "SearchError", "❌ Kesalahan pencarian: {0}" },
+                
                 // Donate window
                 { "DonateTitle", "Dukung proyek" },
                 { "DonateDescription", "Jika Anda menyukai FajrApp, Anda dapat mendukung pengembangannya melalui salah satu platform berikut:" },
@@ -518,6 +593,21 @@ public static class LocalizationService
                 { "DeveloperName", "Тимур Сарсембай" },
                 { "GitHub", "GitHub" },
                 { "Close", "Жабу" },
+                
+                // Appearance
+                { "Appearance", "Көрініс" },
+                { "Theme", "Тақырып" },
+                { "ThemeLight", "Ашық" },
+                { "ThemeDark", "Қараңғы" },
+                { "WidgetOpacity", "Виджет мөлдірлігі" },
+                
+                // City search
+                { "EnterCityName", "Қала атын енгізіңіз" },
+                { "SearchingCity", "🔍 Қаланы іздеу..." },
+                { "CitiesFound", "✅ Табылған қалалар: {0}. Қажеттісін таңдаңыз." },
+                { "CityNotFound", "❌ Қала табылмады. Басқа атпен көріңіз." },
+                { "CitySelected", "✅ Таңдалды: {0}" },
+                { "SearchError", "❌ Іздеу қатесі: {0}" },
                 
                 // Donate window
                 { "DonateTitle", "Жобаны қолдаңыз" },

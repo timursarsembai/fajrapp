@@ -34,6 +34,9 @@ public partial class MainWindow : Window
         _prayerService = new PrayerService();
         _settings = SettingsService.Load();
         
+        // Apply theme and opacity
+        ApplyTheme();
+        
         // Setup timer for countdown updates
         _timer = new DispatcherTimer
         {
@@ -156,6 +159,65 @@ public partial class MainWindow : Window
         AutoStartCheckBox.Background = isEnabled 
             ? new System.Windows.Media.SolidColorBrush(System.Windows.Media.Color.FromArgb(30, 76, 175, 80))
             : System.Windows.Media.Brushes.Transparent;
+    }
+    
+    private void ApplyTheme()
+    {
+        // Apply theme colors
+        System.Windows.Media.Color backgroundColor;
+        System.Windows.Media.Color textColor;
+        System.Windows.Media.Color menuBackgroundColor;
+        System.Windows.Media.Color iconColor;
+        
+        if (_settings.Theme == AppTheme.Light)
+        {
+            // Light theme colors
+            backgroundColor = System.Windows.Media.Color.FromArgb(230, 240, 240, 240);
+            textColor = System.Windows.Media.Color.FromRgb(30, 30, 30);
+            menuBackgroundColor = System.Windows.Media.Color.FromArgb(232, 245, 245, 245);
+            iconColor = System.Windows.Media.Color.FromArgb(170, 30, 30, 30); // Semi-transparent dark
+        }
+        else
+        {
+            // Dark theme colors
+            backgroundColor = System.Windows.Media.Color.FromArgb(204, 32, 32, 32);
+            textColor = System.Windows.Media.Color.FromRgb(255, 255, 255);
+            menuBackgroundColor = System.Windows.Media.Color.FromArgb(232, 32, 32, 32);
+            iconColor = System.Windows.Media.Color.FromArgb(170, 255, 255, 255); // Semi-transparent white
+        }
+        
+        // Apply opacity to background
+        var opacity = (byte)(255 * _settings.WidgetOpacity);
+        backgroundColor.A = opacity;
+        
+        // Update main border background
+        MainBorder.Background = new System.Windows.Media.SolidColorBrush(backgroundColor);
+        
+        // Update menu popup background
+        MenuBorder.Background = new System.Windows.Media.SolidColorBrush(menuBackgroundColor);
+        
+        // Update all text elements
+        var textBrush = new System.Windows.Media.SolidColorBrush(textColor);
+        NextPrayerName.Foreground = textBrush;
+        NextPrayerTime.Foreground = textBrush;
+        CountdownLabel.Foreground = textBrush;
+        Countdown.Foreground = textBrush;
+        
+        // Update menu text colors
+        MenuSettingsText.Foreground = textBrush;
+        MenuChangePositionText.Foreground = textBrush;
+        MenuAutoStartText.Foreground = textBrush;
+        MenuSupportProjectText.Foreground = textBrush;
+        MenuAboutText.Foreground = textBrush;
+        MenuExitText.Foreground = textBrush;
+        
+        // Update menu icon colors
+        var iconBrush = new System.Windows.Media.SolidColorBrush(iconColor);
+        MenuSettingsIcon.Foreground = iconBrush;
+        MenuChangePositionIcon.Foreground = iconBrush;
+        MenuSupportProjectIcon.Foreground = iconBrush;
+        MenuAboutIcon.Foreground = iconBrush;
+        MenuExitIcon.Foreground = iconBrush;
     }
     
     private void MainWindow_Deactivated(object? sender, EventArgs e)
@@ -530,6 +592,7 @@ public partial class MainWindow : Window
         if (settingsWindow.ShowDialog() == true)
         {
             _settings = SettingsService.Load();
+            ApplyTheme(); // Apply theme changes
             _ = LoadPrayerTimesAsync();
         }
     }

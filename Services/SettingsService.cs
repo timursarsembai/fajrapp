@@ -6,6 +6,12 @@ using FajrApp.Models;
 
 namespace FajrApp.Services;
 
+public enum AppTheme
+{
+    Light = 0,
+    Dark = 1
+}
+
 public class AppSettings
 {
     public double Latitude { get; set; } = 55.7558;  // Moscow default
@@ -25,6 +31,10 @@ public class AppSettings
     // Notification settings
     public bool NotificationsEnabled { get; set; } = true;
     public NotificationSoundType NotificationSound { get; set; } = NotificationSoundType.System;
+    
+    // Appearance settings
+    public AppTheme Theme { get; set; } = AppTheme.Dark;
+    public double WidgetOpacity { get; set; } = 1.0; // 0.0 to 1.0
     
     // Time offsets in minutes
     public int FajrOffset { get; set; } = 0;
