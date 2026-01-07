@@ -24,6 +24,9 @@ public partial class PrayerTimesWindow : Window
         _settings = settings;
         _widgetRect = widgetRect;
         
+        // Update localized texts
+        UpdateLocalization();
+        
         // Allow dragging the window
         MouseLeftButtonDown += (s, e) =>
         {
@@ -48,6 +51,21 @@ public partial class PrayerTimesWindow : Window
         Loaded += PrayerTimesWindow_Loaded;
         
         LoadTimes();
+    }
+    
+    private void UpdateLocalization()
+    {
+        Title = LocalizationService.T("PrayerTimes");
+        HeaderText.Text = LocalizationService.T("PrayerTimes");
+        SettingsButton.ToolTip = LocalizationService.T("Settings");
+        
+        // Prayer names
+        FajrLabel.Text = LocalizationService.T("Fajr");
+        SunriseLabel.Text = LocalizationService.T("Sunrise");
+        DhuhrLabel.Text = LocalizationService.T("Dhuhr");
+        AsrLabel.Text = LocalizationService.T("Asr");
+        MaghribLabel.Text = LocalizationService.T("Maghrib");
+        IshaLabel.Text = LocalizationService.T("Isha");
     }
     
     private void PrayerTimesWindow_Loaded(object sender, RoutedEventArgs e)

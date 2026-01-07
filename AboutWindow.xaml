@@ -35,7 +35,8 @@
             
             <!-- Header with close button -->
             <Grid Grid.Row="0" Background="#252525">
-                <TextBlock Text="О приложении" 
+                <TextBlock x:Name="HeaderText"
+                           Text="About" 
                            FontSize="14" 
                            FontWeight="SemiBold" 
                            Margin="16,12"
@@ -94,7 +95,8 @@
                            HorizontalAlignment="Center"
                            Foreground="White"/>
                 
-                <TextBlock Text="Виджет времён молитв для Windows" 
+                <TextBlock x:Name="AppDescription"
+                           Text="Prayer Times Widget for Windows" 
                            FontSize="13" 
                            Opacity="0.7"
                            HorizontalAlignment="Center"

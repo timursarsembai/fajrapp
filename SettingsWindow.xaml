@@ -175,8 +175,9 @@
         </Grid.RowDefinitions>
         
         <!-- Header -->
-        <TextBlock Grid.Row="0" 
-                   Text="⚙️ Настройки" 
+        <TextBlock x:Name="HeaderText"
+                   Grid.Row="0" 
+                   Text="⚙️ Settings" 
                    FontSize="20" 
                    FontWeight="Bold"
                    Margin="0,0,0,16"/>
@@ -184,12 +185,20 @@
         <!-- Settings Content -->
         <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto">
             <StackPanel>
+                <!-- Language Section -->
+                <TextBlock x:Name="LanguageSectionHeader" Text="🌐 Language" Style="{StaticResource SectionHeader}"/>
+                
+                <StackPanel Margin="0,0,0,8">
+                    <TextBlock x:Name="LanguageLabel" Text="Language" Margin="0,0,0,4"/>
+                    <ComboBox x:Name="LanguageComboBox" SelectionChanged="LanguageComboBox_SelectionChanged"/>
+                </StackPanel>
+                
                 <!-- Location Section -->
-                <TextBlock Text="📍 Местоположение" Style="{StaticResource SectionHeader}"/>
+                <TextBlock x:Name="LocationSectionHeader" Text="📍 Location" Style="{StaticResource SectionHeader}"/>
                 
                 <!-- City Search -->
                 <StackPanel Margin="0,0,0,12">
-                    <TextBlock Text="Город (введите название для поиска)" Margin="0,0,0,4"/>
+                    <TextBlock x:Name="CityLabel" Text="City (enter name to search)" Margin="0,0,0,4"/>
                     <Grid>
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="*"/>
@@ -198,8 +207,9 @@
                         </Grid.ColumnDefinitions>
                         <TextBox x:Name="CityTextBox" 
                                  KeyDown="CityTextBox_KeyDown"/>
-                        <Button Grid.Column="2" 
-                                Content="🔍 Найти"
+                        <Button x:Name="SearchButton"
+                                Grid.Column="2" 
+                                Content="🔍 Search"
                                 Click="SearchCity_Click"
                                 Padding="12,6"/>
                     </Grid>
@@ -207,7 +217,7 @@
                 
                 <!-- Find My Location Button -->
                 <Button x:Name="FindLocationButton"
-                        Content="📍 Найти моё местоположение"
+                        Content="📍 Find my location"
                         Click="FindLocation_Click"
                         HorizontalAlignment="Left"
                         Margin="0,0,0,12"
@@ -229,34 +239,34 @@
                     </Grid.ColumnDefinitions>
                     
                     <StackPanel Grid.Column="0">
-                        <TextBlock Text="Широта" Margin="0,0,0,4"/>
+                        <TextBlock x:Name="LatitudeLabel" Text="Latitude" Margin="0,0,0,4"/>
                         <TextBox x:Name="LatitudeTextBox"/>
                     </StackPanel>
                     
                     <StackPanel Grid.Column="2">
-                        <TextBlock Text="Долгота" Margin="0,0,0,4"/>
+                        <TextBlock x:Name="LongitudeLabel" Text="Longitude" Margin="0,0,0,4"/>
                         <TextBox x:Name="LongitudeTextBox"/>
                     </StackPanel>
                 </Grid>
                 
                 <!-- Calculation Method Section -->
-                <TextBlock Text="🕌 Метод расчёта" Style="{StaticResource SectionHeader}"/>
+                <TextBlock x:Name="MethodSectionHeader" Text="🕌 Calculation Method" Style="{StaticResource SectionHeader}"/>
                 
                 <StackPanel Margin="0,0,0,8">
-                    <TextBlock Text="Метод расчёта" Margin="0,0,0,4"/>
+                    <TextBlock x:Name="MethodLabel" Text="Calculation Method" Margin="0,0,0,4"/>
                     <ComboBox x:Name="MethodComboBox"/>
                 </StackPanel>
                 
                 <StackPanel Margin="0,0,0,8">
-                    <TextBlock Text="Метод Асра" Margin="0,0,0,4"/>
+                    <TextBlock x:Name="AsrMethodLabel" Text="Asr Calculation" Margin="0,0,0,4"/>
                     <ComboBox x:Name="AsrMethodComboBox">
-                        <ComboBoxItem Content="Стандартный (Шафии, Малики, Ханбали)" Tag="0"/>
-                        <ComboBoxItem Content="Ханафитский мазхаб" Tag="1"/>
+                        <ComboBoxItem x:Name="AsrStandardItem" Content="Standard (Shafi, Maliki, Hanbali)" Tag="0"/>
+                        <ComboBoxItem x:Name="AsrHanafiItem" Content="Hanafi" Tag="1"/>
                     </ComboBox>
                 </StackPanel>
                 
                 <!-- Time Offsets Section -->
-                <TextBlock Text="⏱️ Корректировка времени (минуты)" Style="{StaticResource SectionHeader}"/>
+                <TextBlock x:Name="OffsetsSectionHeader" Text="⏱️ Time Offsets (minutes)" Style="{StaticResource SectionHeader}"/>
                 
                 <Grid>
                     <Grid.ColumnDefinitions>
@@ -273,32 +283,32 @@
                     </Grid.RowDefinitions>
                     
                     <StackPanel Grid.Column="0" Grid.Row="0">
-                        <TextBlock Text="Фаджр" Margin="0,0,0,4"/>
+                        <TextBlock x:Name="FajrLabel" Text="Fajr" Margin="0,0,0,4"/>
                         <TextBox x:Name="FajrOffsetTextBox"/>
                     </StackPanel>
                     
                     <StackPanel Grid.Column="2" Grid.Row="0">
-                        <TextBlock Text="Восход" Margin="0,0,0,4"/>
+                        <TextBlock x:Name="SunriseLabel" Text="Sunrise" Margin="0,0,0,4"/>
                         <TextBox x:Name="SunriseOffsetTextBox"/>
                     </StackPanel>
                     
                     <StackPanel Grid.Column="4" Grid.Row="0">
-                        <TextBlock Text="Зухр" Margin="0,0,0,4"/>
+                        <TextBlock x:Name="DhuhrLabel" Text="Dhuhr" Margin="0,0,0,4"/>
                         <TextBox x:Name="DhuhrOffsetTextBox"/>
                     </StackPanel>
                     
                     <StackPanel Grid.Column="0" Grid.Row="2">
-                        <TextBlock Text="Аср" Margin="0,0,0,4"/>
+                        <TextBlock x:Name="AsrLabel" Text="Asr" Margin="0,0,0,4"/>
                         <TextBox x:Name="AsrOffsetTextBox"/>
                     </StackPanel>
                     
                     <StackPanel Grid.Column="2" Grid.Row="2">
-                        <TextBlock Text="Магриб" Margin="0,0,0,4"/>
+                        <TextBlock x:Name="MaghribLabel" Text="Maghrib" Margin="0,0,0,4"/>
                         <TextBox x:Name="MaghribOffsetTextBox"/>
                     </StackPanel>
                     
                     <StackPanel Grid.Column="4" Grid.Row="2">
-                        <TextBlock Text="Иша" Margin="0,0,0,4"/>
+                        <TextBlock x:Name="IshaLabel" Text="Isha" Margin="0,0,0,4"/>
                         <TextBox x:Name="IshaOffsetTextBox"/>
                     </StackPanel>
                 </Grid>
@@ -311,12 +321,12 @@
                     HorizontalAlignment="Right"
                     Margin="0,24,0,0">
             <Button x:Name="CancelButton" 
-                    Content="Отмена" 
+                    Content="Cancel" 
                     Style="{StaticResource SecondaryButton}"
                     Click="CancelButton_Click"
                     Margin="0,0,12,0"/>
             <Button x:Name="SaveButton" 
-                    Content="Сохранить" 
+                    Content="Save" 
                     Click="SaveButton_Click"/>
         </StackPanel>
     </Grid>

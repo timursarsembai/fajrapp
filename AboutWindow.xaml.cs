@@ -2,13 +2,14 @@ using System;
 using System.Diagnostics;
 using System.Windows;
 using System.Windows.Input;
+using FajrApp.Services;
 
 namespace FajrApp;
 
 public partial class AboutWindow : Window
 {
     public const string AppVersion = "1.0.0";
-    public const string UpdateDate = "7 января 2026";
+    public const string UpdateDate = "January 7, 2026";
     public const string GitHubUrl = "https://github.com/timursarsembai/fajrapp";
     
     private bool _isClosing = false;
@@ -17,8 +18,7 @@ public partial class AboutWindow : Window
     {
         InitializeComponent();
         
-        VersionText.Text = $"Версия {AppVersion}";
-        UpdateDateText.Text = $"Обновлено: {UpdateDate}";
+        UpdateLocalization();
         
         // Close on Escape
         KeyDown += (s, e) =>
@@ -36,6 +36,16 @@ public partial class AboutWindow : Window
         
         // Close when deactivated
         Deactivated += (s, e) => SafeClose();
+    }
+    
+    private void UpdateLocalization()
+    {
+        Title = LocalizationService.T("AboutTitle");
+        HeaderText.Text = LocalizationService.T("AboutTitle");
+        AppDescription.Text = LocalizationService.T("PrayerTimes") + " Widget for Windows";
+        VersionText.Text = $"{LocalizationService.T("Version")} {AppVersion}";
+        UpdateDateText.Text = $"{LocalizationService.T("Updated")}: {UpdateDate}";
+        GitHubButton.Content = $"🔗 {LocalizationService.T("GitHub")}: timursarsembai/fajrapp";
     }
     
     private void SafeClose()

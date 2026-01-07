@@ -81,16 +81,16 @@
         
         <!-- Context Menu -->
         <Border.ContextMenu>
-            <ContextMenu Placement="Top" HorizontalOffset="-50">
-                <MenuItem Header="Настройки" Click="Settings_Click"/>
+            <ContextMenu x:Name="WidgetContextMenu" Placement="Top" HorizontalOffset="-50">
+                <MenuItem x:Name="MenuSettings" Header="Settings" Click="Settings_Click"/>
                 <Separator/>
-                <MenuItem Header="Изменить положение" Click="MovePosition_Click"/>
-                <MenuItem x:Name="AutoStartMenuItem" Header="Автозапуск" IsCheckable="True" Click="AutoStart_Click"/>
+                <MenuItem x:Name="MenuChangePosition" Header="Change position" Click="MovePosition_Click"/>
+                <MenuItem x:Name="AutoStartMenuItem" Header="Auto start" IsCheckable="True" Click="AutoStart_Click"/>
                 <Separator/>
-                <MenuItem Header="Обновить" Click="Refresh_Click"/>
-                <MenuItem Header="О приложении" Click="About_Click"/>
+                <MenuItem x:Name="MenuRefresh" Header="Refresh" Click="Refresh_Click"/>
+                <MenuItem x:Name="MenuAbout" Header="About" Click="About_Click"/>
                 <Separator/>
-                <MenuItem Header="Выход" Click="Exit_Click"/>
+                <MenuItem x:Name="MenuExit" Header="Exit" Click="Exit_Click"/>
             </ContextMenu>
         </Border.ContextMenu>
         
@@ -118,7 +118,8 @@
                     HorizontalAlignment="Center"
                     Margin="0,-45,0,0"
                     Visibility="Collapsed">
-                <TextBlock Text="⇄ Перетащите виджет | ЛКМ - готово"
+                <TextBlock x:Name="MoveTooltipText"
+                          Text="Drag widget"
                           Foreground="#4CAF50"
                           FontSize="11"/>
             </Border>
@@ -128,7 +129,7 @@
                 <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
                     <TextBlock x:Name="NextPrayerName" 
                                Style="{StaticResource PrayerNameStyle}" 
-                               Text="Фаджр"/>
+                               Text="Fajr"/>
                     <TextBlock x:Name="NextPrayerTime" 
                                Style="{StaticResource TimeStyle}" 
                                Margin="6,0,0,0"
@@ -140,7 +141,7 @@
                 
                 <!-- Countdown -->
                 <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
-                    <TextBlock Style="{StaticResource CountdownLabelStyle}"/>
+                    <TextBlock x:Name="CountdownLabel" Style="{StaticResource CountdownLabelStyle}" Text="in"/>
                     <TextBlock x:Name="Countdown" 
                                Style="{StaticResource CountdownStyle}"
                                Text="2:45:30"/>

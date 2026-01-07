@@ -15,18 +15,7 @@ public class PrayerService
         Timeout = TimeSpan.FromSeconds(30)
     };
     
-    private static readonly Dictionary<string, string> PrayerNames = new()
-    {
-        { "Fajr", "Фаджр" },
-        { "Sunrise", "Восход" },
-        { "Dhuhr", "Зухр" },
-        { "Asr", "Аср" },
-        { "Maghrib", "Магриб" },
-        { "Isha", "Иша" }
-    };
-    
-    public static string GetPrayerName(string key) => 
-        PrayerNames.TryGetValue(key, out var name) ? name : key;
+    public static string GetPrayerName(string key) => LocalizationService.T(key);
 
     public async Task<PrayerTimes?> GetPrayerTimesAsync(AppSettings settings)
     {

@@ -16,22 +16,24 @@ public partial class SettingsWindow : Window
 {
     private readonly AppSettings _settings;
     private static readonly HttpClient HttpClient = new() { Timeout = TimeSpan.FromSeconds(15) };
+    private bool _isInitializing = true;
     
-    private static readonly Dictionary<CalculationMethod, string> MethodNames = new()
+    // Method keys for localization
+    private static readonly Dictionary<CalculationMethod, string> MethodKeys = new()
     {
-        { CalculationMethod.Russia, "Духовное управление мусульман России" },
-        { CalculationMethod.MuslimWorldLeague, "Всемирная исламская лига (MWL)" },
-        { CalculationMethod.Egyptian, "Египетский общий орган геодезии" },
-        { CalculationMethod.Karachi, "Карачи (Университет исламских наук)" },
-        { CalculationMethod.UmmAlQura, "Умм аль-Кура, Мекка" },
-        { CalculationMethod.Dubai, "Дубай" },
-        { CalculationMethod.MoonsightingCommittee, "Комитет Moonsighting" },
-        { CalculationMethod.ISNA, "ISNA (Северная Америка)" },
-        { CalculationMethod.Kuwait, "Кувейт" },
-        { CalculationMethod.Qatar, "Катар" },
-        { CalculationMethod.Singapore, "Сингапур" },
-        { CalculationMethod.Tehran, "Тегеран" },
-        { CalculationMethod.Turkey, "Турция" }
+        { CalculationMethod.Russia, "MethodRussia" },
+        { CalculationMethod.MuslimWorldLeague, "MethodMuslimWorldLeague" },
+        { CalculationMethod.Egyptian, "MethodEgypt" },
+        { CalculationMethod.Karachi, "MethodKarachi" },
+        { CalculationMethod.UmmAlQura, "MethodMakkah" },
+        { CalculationMethod.Dubai, "MethodDubai" },
+        { CalculationMethod.MoonsightingCommittee, "MethodMoonsighting" },
+        { CalculationMethod.ISNA, "MethodISNA" },
+        { CalculationMethod.Kuwait, "MethodKuwait" },
+        { CalculationMethod.Qatar, "MethodQatar" },
+        { CalculationMethod.Singapore, "MethodSingapore" },
+        { CalculationMethod.Tehran, "MethodTehran" },
+        { CalculationMethod.Turkey, "MethodTurkey" }
     };
     
     public SettingsWindow(AppSettings settings)
@@ -40,7 +42,83 @@ public partial class SettingsWindow : Window
         _settings = settings;
         
         LoadSettings();
+        PopulateLanguageComboBox();
         PopulateMethodComboBox();
+        UpdateLocalization();
+        
+        _isInitializing = false;
+    }
+    
+    private void UpdateLocalization()
+    {
+        Title = LocalizationService.T("SettingsTitle");
+        HeaderText.Text = $"⚙️ {LocalizationService.T("Settings")}";
+        
+        // Language section
+        LanguageSectionHeader.Text = $"🌐 {LocalizationService.T("Language")}";
+        LanguageLabel.Text = LocalizationService.T("Language");
+        
+        // Location section
+        LocationSectionHeader.Text = $"📍 {LocalizationService.T("Location")}";
+        CityLabel.Text = $"{LocalizationService.T("City")} ({LocalizationService.T("SearchCity")})";
+        SearchButton.Content = $"🔍 {LocalizationService.T("Search")}";
+        FindLocationButton.Content = $"📍 {LocalizationService.T("Location")}";
+        LatitudeLabel.Text = LocalizationService.T("Latitude");
+        LongitudeLabel.Text = LocalizationService.T("Longitude");
+        
+        // Method section
+        MethodSectionHeader.Text = $"🕌 {LocalizationService.T("CalculationMethod")}";
+        MethodLabel.Text = LocalizationService.T("CalculationMethod");
+        AsrMethodLabel.Text = LocalizationService.T("AsrCalculation");
+        AsrStandardItem.Content = LocalizationService.T("Standard");
+        AsrHanafiItem.Content = LocalizationService.T("Hanafi");
+        
+        // Offsets section
+        OffsetsSectionHeader.Text = $"⏱️ {LocalizationService.T("TimeOffsets")}";
+        FajrLabel.Text = LocalizationService.T("Fajr");
+        SunriseLabel.Text = LocalizationService.T("Sunrise");
+        DhuhrLabel.Text = LocalizationService.T("Dhuhr");
+        AsrLabel.Text = LocalizationService.T("Asr");
+        MaghribLabel.Text = LocalizationService.T("Maghrib");
+        IshaLabel.Text = LocalizationService.T("Isha");
+        
+        // Buttons
+        CancelButton.Content = LocalizationService.T("Cancel");
+        SaveButton.Content = LocalizationService.T("Save");
+        
+        // Refresh method combobox with localized names
+        RefreshMethodComboBox();
+    }
+    
+    private void PopulateLanguageComboBox()
+    {
+        foreach (var lang in LocalizationService.AvailableLanguages)
+        {
+            var item = new ComboBoxItem
+            {
+                Content = lang.Value,
+                Tag = lang.Key
+            };
+            
+            LanguageComboBox.Items.Add(item);
+            
+            if (lang.Key == LocalizationService.CurrentLanguage)
+            {
+                LanguageComboBox.SelectedItem = item;
+            }
+        }
+    }
+    
+    private void LanguageComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+    {
+        if (_isInitializing) return;
+        
+        if (LanguageComboBox.SelectedItem is ComboBoxItem selectedItem)
+        {
+            var langCode = selectedItem.Tag?.ToString() ?? "en";
+            LocalizationService.SetLanguage(langCode);
+            UpdateLocalization();
+        }
     }
     
     private void LoadSettings()
@@ -62,17 +140,44 @@ public partial class SettingsWindow : Window
     
     private void PopulateMethodComboBox()
     {
-        foreach (var method in MethodNames)
+        foreach (var method in MethodKeys)
         {
             var item = new ComboBoxItem
             {
-                Content = method.Value,
+                Content = LocalizationService.T(method.Value),
                 Tag = method.Key
             };
             
             MethodComboBox.Items.Add(item);
             
             if (method.Key == _settings.Method)
+            {
+                MethodComboBox.SelectedItem = item;
+            }
+        }
+    }
+    
+    private void RefreshMethodComboBox()
+    {
+        var selectedMethod = _settings.Method;
+        if (MethodComboBox.SelectedItem is ComboBoxItem selectedItem)
+        {
+            selectedMethod = (CalculationMethod)selectedItem.Tag;
+        }
+        
+        MethodComboBox.Items.Clear();
+        
+        foreach (var method in MethodKeys)
+        {
+            var item = new ComboBoxItem
+            {
+                Content = LocalizationService.T(method.Value),
+                Tag = method.Key
+            };
+            
+            MethodComboBox.Items.Add(item);
+            
+            if (method.Key == selectedMethod)
             {
                 MethodComboBox.SelectedItem = item;
             }

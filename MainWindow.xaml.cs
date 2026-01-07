@@ -54,6 +54,27 @@ public partial class MainWindow : Window
         {
             AutoStartHelper.SetAutoStart(true);
         }
+        
+        // Subscribe to language changes
+        LocalizationService.LanguageChanged += UpdateLocalization;
+        UpdateLocalization();
+    }
+    
+    private void UpdateLocalization()
+    {
+        // Update context menu
+        MenuSettings.Header = LocalizationService.T("Settings");
+        MenuChangePosition.Header = LocalizationService.T("ChangePosition");
+        AutoStartMenuItem.Header = LocalizationService.T("AutoStart");
+        MenuRefresh.Header = LocalizationService.T("Refresh");
+        MenuAbout.Header = LocalizationService.T("About");
+        MenuExit.Header = LocalizationService.T("Exit");
+        
+        // Update countdown label
+        CountdownLabel.Text = LocalizationService.T("In");
+        
+        // Update move tooltip
+        MoveTooltipText.Text = LocalizationService.T("DragWidget");
     }
     
     private void MainWindow_SourceInitialized(object? sender, EventArgs e)

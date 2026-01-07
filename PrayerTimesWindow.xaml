@@ -45,7 +45,8 @@
                 
                 <StackPanel Grid.Column="0" Orientation="Horizontal" Margin="16,12">
                     <TextBlock Text="🕌" FontSize="18" VerticalAlignment="Center"/>
-                    <TextBlock Text="Времена молитв" 
+                    <TextBlock x:Name="HeaderText" 
+                               Text="Prayer Times" 
                                FontSize="16" 
                                FontWeight="SemiBold" 
                                Margin="8,0,0,0"
@@ -62,7 +63,6 @@
                         BorderThickness="0"
                         Padding="8,4"
                         Cursor="Hand"
-                        ToolTip="Настройки"
                         Click="SettingsButton_Click">
                     <Button.Style>
                         <Style TargetType="Button">

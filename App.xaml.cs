@@ -1,6 +1,7 @@
 using System;
 using System.Threading;
 using System.Windows;
+using FajrApp.Services;
 
 namespace FajrApp;
 
@@ -17,23 +18,26 @@ public partial class App : Application
         if (!createdNew)
         {
             // Another instance is already running
-            MessageBox.Show("FajrApp уже запущен.", "FajrApp", 
+            MessageBox.Show("FajrApp is already running.", "FajrApp", 
                 MessageBoxButton.OK, MessageBoxImage.Information);
             Current.Shutdown();
             return;
         }
         
+        // Initialize localization
+        LocalizationService.Initialize();
+        
         // Handle unhandled exceptions
         AppDomain.CurrentDomain.UnhandledException += (s, args) =>
         {
             var ex = args.ExceptionObject as Exception;
-            MessageBox.Show($"Критическая ошибка: {ex?.Message}", "FajrApp - Ошибка",
+            MessageBox.Show($"Critical error: {ex?.Message}", "FajrApp - Error",
                 MessageBoxButton.OK, MessageBoxImage.Error);
         };
         
         DispatcherUnhandledException += (s, args) =>
         {
-            MessageBox.Show($"Ошибка: {args.Exception.Message}", "FajrApp - Ошибка",
+            MessageBox.Show($"Error: {args.Exception.Message}", "FajrApp - Error",
                 MessageBoxButton.OK, MessageBoxImage.Error);
             args.Handled = true;
         };

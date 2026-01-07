@@ -10,11 +10,14 @@ public class AppSettings
 {
     public double Latitude { get; set; } = 55.7558;  // Moscow default
     public double Longitude { get; set; } = 37.6173;
-    public string City { get; set; } = "Москва";
-    public CalculationMethod Method { get; set; } = CalculationMethod.Russia;
+    public string City { get; set; } = "Moscow";
+    public CalculationMethod Method { get; set; } = CalculationMethod.MuslimWorldLeague;
     public AsrMethod AsrMethod { get; set; } = AsrMethod.Standard;
     public bool UseGeolocation { get; set; } = true;
     public bool AutoStart { get; set; } = true;
+    
+    // Language (empty = auto-detect)
+    public string Language { get; set; } = "";
     
     // Widget position offset from default (in pixels)
     public double WidgetOffsetX { get; set; } = 0;
