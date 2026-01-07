@@ -45,6 +45,48 @@
             <Setter Property="Opacity" Value="0.9"/>
         </Style>
         
+        <!-- Menu item style -->
+        <Style x:Key="MenuItemStyle" TargetType="Border">
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="Padding" Value="16,10"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Style.Triggers>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter Property="Background" Value="#33FFFFFF"/>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+        
+        <Style x:Key="MenuTextStyle" TargetType="TextBlock">
+            <Setter Property="FontFamily" Value="Segoe UI Variable, Segoe UI"/>
+            <Setter Property="FontSize" Value="13"/>
+            <Setter Property="Foreground" Value="White"/>
+        </Style>
+        
+        <Style x:Key="MenuIconStyle" TargetType="TextBlock">
+            <Setter Property="FontFamily" Value="Segoe MDL2 Assets"/>
+            <Setter Property="FontSize" Value="14"/>
+            <Setter Property="Foreground" Value="#AAFFFFFF"/>
+            <Setter Property="Width" Value="24"/>
+            <Setter Property="VerticalAlignment" Value="Center"/>
+        </Style>
+        
+        <Style x:Key="MenuSeparatorStyle" TargetType="Border">
+            <Setter Property="Height" Value="1"/>
+            <Setter Property="Background" Value="#33FFFFFF"/>
+            <Setter Property="Margin" Value="12,4"/>
+        </Style>
+        
+        <Style x:Key="CheckBoxStyle" TargetType="Border">
+            <Setter Property="Width" Value="18"/>
+            <Setter Property="Height" Value="18"/>
+            <Setter Property="CornerRadius" Value="3"/>
+            <Setter Property="BorderBrush" Value="#66FFFFFF"/>
+            <Setter Property="BorderThickness" Value="1.5"/>
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="Margin" Value="0,0,8,0"/>
+        </Style>
+        
         <!-- Pulsing animation for move mode -->
         <Storyboard x:Key="PulseAnimation" RepeatBehavior="Forever">
             <DoubleAnimation Storyboard.TargetName="MoveModeGlow"
@@ -64,7 +106,8 @@
         </Storyboard>
     </Window.Resources>
     
-    <Border x:Name="MainBorder"
+    <Grid>
+        <Border x:Name="MainBorder"
             Background="#CC202020"
             CornerRadius="4"
             Padding="12,0"
@@ -134,4 +177,82 @@
             </StackPanel>
         </Grid>
     </Border>
+    
+    <!-- Custom Popup Menu -->
+    <Popup x:Name="MenuPopup" 
+           Placement="Top" 
+           PlacementTarget="{Binding ElementName=MainBorder}"
+           StaysOpen="False"
+           AllowsTransparency="True"
+           PopupAnimation="Fade">
+        <Border Background="#E8202020"
+                CornerRadius="8"
+                Margin="8"
+                MinWidth="200">
+            <Border.Effect>
+                <DropShadowEffect Color="Black" BlurRadius="20" ShadowDepth="4" Opacity="0.5"/>
+            </Border.Effect>
+            
+            <StackPanel Margin="0,6">
+                <!-- Settings -->
+                <Border Style="{StaticResource MenuItemStyle}" MouseLeftButtonUp="MenuSettings_Click">
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock Text="&#xE713;" Style="{StaticResource MenuIconStyle}"/>
+                        <TextBlock x:Name="MenuSettingsText" Text="Settings" Style="{StaticResource MenuTextStyle}"/>
+                    </StackPanel>
+                </Border>
+                
+                <!-- Separator -->
+                <Border Style="{StaticResource MenuSeparatorStyle}"/>
+                
+                <!-- Change Position -->
+                <Border Style="{StaticResource MenuItemStyle}" MouseLeftButtonUp="MenuChangePosition_Click">
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock Text="&#xE8AB;" Style="{StaticResource MenuIconStyle}"/>
+                        <TextBlock x:Name="MenuChangePositionText" Text="Change position" Style="{StaticResource MenuTextStyle}"/>
+                    </StackPanel>
+                </Border>
+                
+                <!-- Auto Start -->
+                <Border Style="{StaticResource MenuItemStyle}" MouseLeftButtonUp="MenuAutoStart_Click">
+                    <StackPanel Orientation="Horizontal">
+                        <Border x:Name="AutoStartCheckBox" Style="{StaticResource CheckBoxStyle}">
+                            <TextBlock x:Name="AutoStartCheck" 
+                                       Text="&#xE73E;" 
+                                       FontFamily="Segoe MDL2 Assets"
+                                       FontSize="12"
+                                       Foreground="#4CAF50"
+                                       HorizontalAlignment="Center"
+                                       VerticalAlignment="Center"
+                                       Visibility="Collapsed"/>
+                        </Border>
+                        <TextBlock x:Name="MenuAutoStartText" Text="Auto start" Style="{StaticResource MenuTextStyle}"/>
+                    </StackPanel>
+                </Border>
+                
+                <!-- Separator -->
+                <Border Style="{StaticResource MenuSeparatorStyle}"/>
+                
+                <!-- About -->
+                <Border Style="{StaticResource MenuItemStyle}" MouseLeftButtonUp="MenuAbout_Click">
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock Text="&#xE946;" Style="{StaticResource MenuIconStyle}"/>
+                        <TextBlock x:Name="MenuAboutText" Text="About" Style="{StaticResource MenuTextStyle}"/>
+                    </StackPanel>
+                </Border>
+                
+                <!-- Separator -->
+                <Border Style="{StaticResource MenuSeparatorStyle}"/>
+                
+                <!-- Exit -->
+                <Border Style="{StaticResource MenuItemStyle}" MouseLeftButtonUp="MenuExit_Click">
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock Text="&#xE7E8;" Style="{StaticResource MenuIconStyle}"/>
+                        <TextBlock x:Name="MenuExitText" Text="Exit" Style="{StaticResource MenuTextStyle}"/>
+                    </StackPanel>
+                </Border>
+            </StackPanel>
+        </Border>
+    </Popup>
+    </Grid>
 </Window>

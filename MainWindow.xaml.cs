@@ -22,8 +22,6 @@ public partial class MainWindow : Window
     private bool _isDragging;
     private Point _dragStartPoint;
     private double _dragStartLeft;
-    private MenuWindow? _menuWindow;
-    private bool _isAutoStartEnabled;
     
     public MainWindow()
     {
@@ -50,7 +48,7 @@ public partial class MainWindow : Window
         KeyDown += MainWindow_KeyDown;
         
         // Initialize autostart state
-        _isAutoStartEnabled = AutoStartHelper.IsAutoStartEnabled();
+        UpdateAutoStartCheckbox();
         
         // Apply autostart setting if needed
         if (_settings.AutoStart && !AutoStartHelper.IsAutoStartEnabled())
@@ -70,60 +68,73 @@ public partial class MainWindow : Window
         
         // Update move tooltip
         MoveTooltipText.Text = LocalizationService.T("DragWidget");
+        
+        // Update menu items
+        MenuSettingsText.Text = LocalizationService.T("Settings");
+        MenuChangePositionText.Text = LocalizationService.T("ChangePosition");
+        MenuAutoStartText.Text = LocalizationService.T("AutoStart");
+        MenuAboutText.Text = LocalizationService.T("About");
+        MenuExitText.Text = LocalizationService.T("Exit");
+    }
+    
+    private void UpdateAutoStartCheckbox()
+    {
+        var isEnabled = AutoStartHelper.IsAutoStartEnabled();
+        AutoStartCheck.Visibility = isEnabled ? Visibility.Visible : Visibility.Collapsed;
+        AutoStartCheckBox.Background = isEnabled 
+            ? new System.Windows.Media.SolidColorBrush(System.Windows.Media.Color.FromArgb(30, 76, 175, 80))
+            : System.Windows.Media.Brushes.Transparent;
     }
     
     private void MainWindow_MouseRightButtonUp(object sender, MouseButtonEventArgs e)
     {
-        // Close existing menu if open
-        if (_menuWindow != null && _menuWindow.IsVisible)
+        // Toggle popup menu
+        if (MenuPopup.IsOpen)
         {
-            _menuWindow.Close();
-            _menuWindow = null;
-            return;
+            MenuPopup.IsOpen = false;
         }
-        
-        // Create and show custom menu
-        var widgetRect = new Rect(Left, Top, ActualWidth, ActualHeight);
-        var menuWindow = new MenuWindow(_isAutoStartEnabled, widgetRect);
-        _menuWindow = menuWindow;
-        
-        menuWindow.Closed += (s, args) =>
+        else
         {
-            _menuWindow = null;
-            
-            // Handle menu actions on dispatcher to ensure UI is ready
-            Dispatcher.BeginInvoke(() =>
-            {
-                if (menuWindow.SettingsRequested)
-                {
-                    OpenSettings();
-                }
-                else if (menuWindow.ChangePositionRequested)
-                {
-                    EnterMoveMode();
-                }
-                else if (menuWindow.AboutRequested)
-                {
-                    var aboutWindow = new AboutWindow();
-                    aboutWindow.ShowDialog();
-                }
-                else if (menuWindow.ExitRequested)
-                {
-                    _timer.Stop();
-                    VirtualDesktopHelper.StopMonitoring();
-                    Application.Current.Shutdown();
-                }
-                
-                // Update auto start state
-                if (menuWindow.AutoStartToggled)
-                {
-                    _isAutoStartEnabled = AutoStartHelper.IsAutoStartEnabled();
-                }
-            });
-        };
-        
-        menuWindow.Show();
+            UpdateAutoStartCheckbox();
+            MenuPopup.IsOpen = true;
+        }
         e.Handled = true;
+    }
+    
+    private void MenuSettings_Click(object sender, MouseButtonEventArgs e)
+    {
+        MenuPopup.IsOpen = false;
+        OpenSettings();
+    }
+    
+    private void MenuChangePosition_Click(object sender, MouseButtonEventArgs e)
+    {
+        MenuPopup.IsOpen = false;
+        EnterMoveMode();
+    }
+    
+    private void MenuAutoStart_Click(object sender, MouseButtonEventArgs e)
+    {
+        var isEnabled = AutoStartHelper.IsAutoStartEnabled();
+        AutoStartHelper.SetAutoStart(!isEnabled);
+        _settings.AutoStart = !isEnabled;
+        SettingsService.Save(_settings);
+        UpdateAutoStartCheckbox();
+    }
+    
+    private void MenuAbout_Click(object sender, MouseButtonEventArgs e)
+    {
+        MenuPopup.IsOpen = false;
+        var aboutWindow = new AboutWindow();
+        aboutWindow.ShowDialog();
+    }
+    
+    private void MenuExit_Click(object sender, MouseButtonEventArgs e)
+    {
+        MenuPopup.IsOpen = false;
+        _timer.Stop();
+        VirtualDesktopHelper.StopMonitoring();
+        Application.Current.Shutdown();
     }
     
     private void MainWindow_SourceInitialized(object? sender, EventArgs e)
