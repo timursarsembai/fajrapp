@@ -1,0 +1,136 @@
+<Window x:Class="FajrApp.DonateWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Support the project - FajrApp"
+        Width="440"
+        Height="380"
+        WindowStartupLocation="CenterScreen"
+        ResizeMode="NoResize"
+        Background="#1E1E1E"
+        Topmost="True"
+        ShowInTaskbar="False">
+    
+    <Window.Resources>
+        <Style TargetType="Button">
+            <Setter Property="Background" Value="#0078D4"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Padding" Value="20,12"/>
+            <Setter Property="FontFamily" Value="Segoe UI Variable, Segoe UI"/>
+            <Setter Property="FontSize" Value="14"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="Margin" Value="0,0,0,12"/>
+            <Setter Property="HorizontalContentAlignment" Value="Left"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border Background="{TemplateBinding Background}" 
+                                CornerRadius="6"
+                                Padding="{TemplateBinding Padding}">
+                            <ContentPresenter HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}" 
+                                            VerticalAlignment="Center"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter Property="Opacity" Value="0.9"/>
+                            </Trigger>
+                            <Trigger Property="IsPressed" Value="True">
+                                <Setter Property="Opacity" Value="0.8"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+        
+        <Style x:Key="CloseButton" TargetType="Button" BasedOn="{StaticResource {x:Type Button}}">
+            <Setter Property="Background" Value="#3D3D3D"/>
+            <Setter Property="Padding" Value="24,10"/>
+            <Setter Property="HorizontalContentAlignment" Value="Center"/>
+        </Style>
+    </Window.Resources>
+    
+    <Border Background="#1E1E1E" Padding="32">
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+            
+            <!-- Header -->
+            <StackPanel Grid.Row="0" Margin="0,0,0,24">
+                <TextBlock x:Name="HeaderText"
+                          Text="❤️ Support the project"
+                          FontFamily="Segoe UI Variable, Segoe UI"
+                          FontSize="24"
+                          FontWeight="Bold"
+                          Foreground="White"
+                          Margin="0,0,0,12"/>
+                <TextBlock x:Name="DescriptionText"
+                          Text="If you like FajrApp, you can support its development through one of the following platforms:"
+                          FontFamily="Segoe UI Variable, Segoe UI"
+                          FontSize="13"
+                          Foreground="#B0B0B0"
+                          TextWrapping="Wrap"
+                          LineHeight="20"/>
+            </StackPanel>
+            
+            <!-- Donation Buttons -->
+            <StackPanel Grid.Row="1" VerticalAlignment="Center">
+                <!-- DonationAlerts -->
+                <Button x:Name="DonationAlertsButton"
+                        Click="DonationAlerts_Click">
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock Text="🔔" FontSize="24" Margin="0,0,12,0" VerticalAlignment="Center"/>
+                        <StackPanel>
+                            <TextBlock Text="DonationAlerts" FontWeight="SemiBold" FontSize="15"/>
+                            <TextBlock Text="Popular platform for donations" 
+                                      FontSize="11" 
+                                      Foreground="#B0E0FF" 
+                                      Margin="0,2,0,0"/>
+                        </StackPanel>
+                    </StackPanel>
+                </Button>
+                
+                <!-- Liberapay -->
+                <Button x:Name="LiberapayButton"
+                        Click="Liberapay_Click"
+                        Background="#F6C915">
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock Text="💛" FontSize="24" Margin="0,0,12,0" VerticalAlignment="Center"/>
+                        <StackPanel>
+                            <TextBlock Text="Liberapay" FontWeight="SemiBold" FontSize="15"/>
+                            <TextBlock Text="Open source, recurring donations" 
+                                      FontSize="11" 
+                                      Foreground="#2B1A00" 
+                                      Margin="0,2,0,0"/>
+                        </StackPanel>
+                    </StackPanel>
+                </Button>
+                
+                <!-- Thank You Message -->
+                <Border Background="#2D2D2D" 
+                        CornerRadius="6" 
+                        Padding="16"
+                        Margin="0,12,0,0">
+                    <TextBlock x:Name="ThankYouText"
+                              Text="Thank you for your support! 🙏"
+                              FontFamily="Segoe UI Variable, Segoe UI"
+                              FontSize="13"
+                              Foreground="#4CAF50"
+                              TextAlignment="Center"/>
+                </Border>
+            </StackPanel>
+            
+            <!-- Close Button -->
+            <Button x:Name="CloseButton"
+                    Grid.Row="2"
+                    Content="Close"
+                    Style="{StaticResource CloseButton}"
+                    Click="CloseButton_Click"
+                    HorizontalAlignment="Center"
+                    Margin="0,24,0,0"/>
+        </Grid>
+    </Border>
+</Window>

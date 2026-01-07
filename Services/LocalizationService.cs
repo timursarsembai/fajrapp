@@ -83,6 +83,11 @@ public static class LocalizationService
                 { "GitHub", "GitHub" },
                 { "Close", "Close" },
                 
+                // Donate window
+                { "DonateTitle", "Support the project" },
+                { "DonateDescription", "If you like FajrApp, you can support its development through one of the following platforms:" },
+                { "ThankYou", "Thank you for your support! 🙏" },
+                
                 // Notifications
                 { "Notifications", "Notifications" },
                 { "EnableNotifications", "Enable notifications" },
@@ -166,6 +171,11 @@ public static class LocalizationService
                 { "GitHub", "GitHub" },
                 { "Close", "Cerrar" },
                 
+                // Donate window
+                { "DonateTitle", "Apoyar el proyecto" },
+                { "DonateDescription", "Si te gusta FajrApp, puedes apoyar su desarrollo a través de una de las siguientes plataformas:" },
+                { "ThankYou", "¡Gracias por tu apoyo! 🙏" },
+                
                 // Notifications
                 { "Notifications", "Notificaciones" },
                 { "EnableNotifications", "Habilitar notificaciones" },
@@ -247,6 +257,11 @@ public static class LocalizationService
                 { "DeveloperName", "تيمور سارسمباي" },
                 { "GitHub", "GitHub" },
                 { "Close", "إغلاق" },
+                
+                // Donate window
+                { "DonateTitle", "دعم المشروع" },
+                { "DonateDescription", "إذا أعجبك FajrApp، يمكنك دعم تطويره من خلال إحدى المنصات التالية:" },
+                { "ThankYou", "شكراً لدعمك! 🙏" },
                 
                 // Notifications
                 { "Notifications", "الإشعارات" },
@@ -330,6 +345,11 @@ public static class LocalizationService
                 { "GitHub", "GitHub" },
                 { "Close", "Закрыть" },
                 
+                // Donate window
+                { "DonateTitle", "Помогите проекту" },
+                { "DonateDescription", "Если вам нравится FajrApp, вы можете поддержать его развитие через одну из следующих платформ:" },
+                { "ThankYou", "Спасибо за вашу поддержку! 🙏" },
+                
                 // Notifications
                 { "Notifications", "Уведомления" },
                 { "EnableNotifications", "Включить уведомления" },
@@ -412,6 +432,11 @@ public static class LocalizationService
                 { "GitHub", "GitHub" },
                 { "Close", "Tutup" },
                 
+                // Donate window
+                { "DonateTitle", "Dukung proyek" },
+                { "DonateDescription", "Jika Anda menyukai FajrApp, Anda dapat mendukung pengembangannya melalui salah satu platform berikut:" },
+                { "ThankYou", "Terima kasih atas dukungan Anda! 🙏" },
+                
                 // Notifications
                 { "Notifications", "Notifikasi" },
                 { "EnableNotifications", "Aktifkan notifikasi" },
@@ -493,6 +518,11 @@ public static class LocalizationService
                 { "DeveloperName", "Тимур Сарсембай" },
                 { "GitHub", "GitHub" },
                 { "Close", "Жабу" },
+                
+                // Donate window
+                { "DonateTitle", "Жобаны қолдаңыз" },
+                { "DonateDescription", "Егер FajrApp ұнаса, оны келесі платформалар арқылы қолдай аласыз:" },
+                { "ThankYou", "Қолдағаныңыз үшін рахмет! 🙏" },
                 
                 // Notifications
                 { "Notifications", "Хабарландырулар" },

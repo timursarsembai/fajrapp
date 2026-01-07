@@ -216,15 +216,11 @@ public partial class MainWindow : Window
     {
         MenuPopup.IsOpen = false;
         e.Handled = true;
-        try
+        Dispatcher.BeginInvoke(() =>
         {
-            System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo
-            {
-                FileName = "https://www.donationalerts.com/r/timursarsembai",
-                UseShellExecute = true
-            });
-        }
-        catch { }
+            var donateWindow = new DonateWindow();
+            donateWindow.ShowDialog();
+        });
     }
     
     private void MenuAbout_Click(object sender, MouseButtonEventArgs e)

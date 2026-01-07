@@ -131,7 +131,8 @@ FajrApp/
 
 Если вам нравится FajrApp, вы можете поддержать разработку:
 
-[![Donate](https://img.shields.io/badge/Donate-DonationAlerts-orange)](https://www.donationalerts.com/r/timursarsembai)
+- [![DonationAlerts](https://img.shields.io/badge/Donate-DonationAlerts-orange)](https://www.donationalerts.com/r/timursarsembai)
+- [![Liberapay](https://img.shields.io/badge/Donate-Liberapay-yellow)](https://liberapay.com/timursarsembai/donate)
 
 ## 📄 Лицензия
 
