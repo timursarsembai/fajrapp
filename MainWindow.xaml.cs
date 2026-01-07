@@ -66,7 +66,6 @@ public partial class MainWindow : Window
         MenuSettings.Header = LocalizationService.T("Settings");
         MenuChangePosition.Header = LocalizationService.T("ChangePosition");
         AutoStartMenuItem.Header = LocalizationService.T("AutoStart");
-        MenuRefresh.Header = LocalizationService.T("Refresh");
         MenuAbout.Header = LocalizationService.T("About");
         MenuExit.Header = LocalizationService.T("Exit");
         
@@ -315,15 +314,6 @@ public partial class MainWindow : Window
         
         _settings.AutoStart = isEnabled;
         SettingsService.Save(_settings);
-    }
-    
-    private async void Refresh_Click(object sender, RoutedEventArgs e)
-    {
-        // Clear cache to force refresh
-        _settings.CachedTimes = null;
-        SettingsService.Save(_settings);
-        
-        await LoadPrayerTimesAsync();
     }
     
     private void About_Click(object sender, RoutedEventArgs e)

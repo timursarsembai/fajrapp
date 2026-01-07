@@ -81,13 +81,12 @@
         
         <!-- Context Menu -->
         <Border.ContextMenu>
-            <ContextMenu x:Name="WidgetContextMenu" Placement="Top" HorizontalOffset="-50">
+            <ContextMenu x:Name="WidgetContextMenu" Placement="Top" HorizontalOffset="-50" StaysOpen="False">
                 <MenuItem x:Name="MenuSettings" Header="Settings" Click="Settings_Click"/>
                 <Separator/>
                 <MenuItem x:Name="MenuChangePosition" Header="Change position" Click="MovePosition_Click"/>
                 <MenuItem x:Name="AutoStartMenuItem" Header="Auto start" IsCheckable="True" Click="AutoStart_Click"/>
                 <Separator/>
-                <MenuItem x:Name="MenuRefresh" Header="Refresh" Click="Refresh_Click"/>
                 <MenuItem x:Name="MenuAbout" Header="About" Click="About_Click"/>
                 <Separator/>
                 <MenuItem x:Name="MenuExit" Header="Exit" Click="Exit_Click"/>
