@@ -91,12 +91,24 @@ public partial class MenuWindow : Window
         // Close when clicking elsewhere (but not if we're already closing from a menu item)
         if (!_isClosing)
         {
-            Close();
+            _isClosing = true;
+            Dispatcher.BeginInvoke(() =>
+            {
+                try
+                {
+                    if (IsLoaded && IsVisible)
+                    {
+                        Close();
+                    }
+                }
+                catch { }
+            });
         }
     }
     
     private void SafeClose()
     {
+        if (_isClosing) return;
         _isClosing = true;
         Close();
     }
