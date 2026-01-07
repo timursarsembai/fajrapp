@@ -3,7 +3,7 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         Title="Support the project - FajrApp"
         Width="440"
-        Height="380"
+        Height="460"
         WindowStartupLocation="CenterScreen"
         ResizeMode="NoResize"
         Background="#1E1E1E"

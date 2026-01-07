@@ -29,9 +29,6 @@ public partial class DonateWindow : Window
             if (e.ButtonState == MouseButtonState.Pressed)
                 DragMove();
         };
-        
-        // Close when deactivated
-        Deactivated += (s, e) => Close();
     }
     
     private void UpdateLocalization()
