@@ -140,6 +140,7 @@ public partial class MainWindow : Window
         MenuSettingsText.Text = LocalizationService.T("Settings");
         MenuChangePositionText.Text = LocalizationService.T("ChangePosition");
         MenuAutoStartText.Text = LocalizationService.T("AutoStart");
+        MenuSupportProjectText.Text = LocalizationService.T("SupportProject");
         MenuAboutText.Text = LocalizationService.T("About");
         MenuExitText.Text = LocalizationService.T("Exit");
     }
@@ -205,6 +206,21 @@ public partial class MainWindow : Window
         SettingsService.Save(_settings);
         UpdateAutoStartCheckbox();
         e.Handled = true;
+    }
+    
+    private void MenuSupportProject_Click(object sender, MouseButtonEventArgs e)
+    {
+        MenuPopup.IsOpen = false;
+        e.Handled = true;
+        try
+        {
+            System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo
+            {
+                FileName = "https://www.donationalerts.com/r/timursarsembai",
+                UseShellExecute = true
+            });
+        }
+        catch { }
     }
     
     private void MenuAbout_Click(object sender, MouseButtonEventArgs e)

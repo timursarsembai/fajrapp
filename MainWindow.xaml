@@ -41,6 +41,7 @@
         </Style>
         
         <Style x:Key="CountdownStyle" TargetType="TextBlock" BasedOn="{StaticResource WidgetTextStyle}">
+            <Setter Property="FontFamily" Value="Consolas, Courier New, monospace"/>
             <Setter Property="FontWeight" Value="Medium"/>
             <Setter Property="Opacity" Value="0.9"/>
         </Style>
@@ -233,6 +234,14 @@
                 
                 <!-- Separator -->
                 <Border Style="{StaticResource MenuSeparatorStyle}"/>
+                
+                <!-- Support Project -->
+                <Border Style="{StaticResource MenuItemStyle}" MouseLeftButtonUp="MenuSupportProject_Click">
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock Text="&#xE8EC;" Style="{StaticResource MenuIconStyle}"/>
+                        <TextBlock x:Name="MenuSupportProjectText" Text="Support the project" Style="{StaticResource MenuTextStyle}"/>
+                    </StackPanel>
+                </Border>
                 
                 <!-- About -->
                 <Border Style="{StaticResource MenuItemStyle}" MouseLeftButtonUp="MenuAbout_Click">

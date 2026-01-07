@@ -45,6 +45,7 @@ public static class LocalizationService
                 { "ChangePosition", "Change position" },
                 { "AutoStart", "Auto start" },
                 { "Refresh", "Refresh" },
+                { "SupportProject", "Support the project" },
                 { "About", "About" },
                 { "Exit", "Exit" },
                 
@@ -120,6 +121,7 @@ public static class LocalizationService
                 { "ChangePosition", "Cambiar posición" },
                 { "AutoStart", "Inicio automático" },
                 { "Refresh", "Actualizar" },
+                { "SupportProject", "Apoyar el proyecto" },
                 { "About", "Acerca de" },
                 { "Exit", "Salir" },
                 
@@ -190,6 +192,7 @@ public static class LocalizationService
                 { "ChangePosition", "تغيير الموضع" },
                 { "AutoStart", "بدء تلقائي" },
                 { "Refresh", "تحديث" },
+                { "SupportProject", "دعم المشروع" },
                 { "About", "حول" },
                 { "Exit", "خروج" },
                 
@@ -260,6 +263,7 @@ public static class LocalizationService
                 { "ChangePosition", "Изменить положение" },
                 { "AutoStart", "Автозапуск" },
                 { "Refresh", "Обновить" },
+                { "SupportProject", "Помогите проекту" },
                 { "About", "О приложении" },
                 { "Exit", "Выход" },
                 
@@ -330,6 +334,7 @@ public static class LocalizationService
                 { "ChangePosition", "Ubah posisi" },
                 { "AutoStart", "Mulai otomatis" },
                 { "Refresh", "Segarkan" },
+                { "SupportProject", "Dukung proyek" },
                 { "About", "Tentang" },
                 { "Exit", "Keluar" },
                 
@@ -400,6 +405,7 @@ public static class LocalizationService
                 { "ChangePosition", "Орнын өзгерту" },
                 { "AutoStart", "Авто іске қосу" },
                 { "Refresh", "Жаңарту" },
+                { "SupportProject", "Жобаны қолдаңыз" },
                 { "About", "Бағдарлама туралы" },
                 { "Exit", "Шығу" },
                 
