@@ -65,6 +65,9 @@ public partial class MainWindow : Window
         MouseHook.MouseDown += OnGlobalMouseDown;
         MouseHook.Start();
         
+        // Resume hook when popup closes (e.g., by clicking elsewhere)
+        MenuPopup.Closed += (s, e) => MouseHook.Start();
+        
         Closed += (s, e) => MouseHook.Stop();
     }
     
@@ -158,9 +161,11 @@ public partial class MainWindow : Window
         if (MenuPopup.IsOpen)
         {
             MenuPopup.IsOpen = false;
+            MouseHook.Start(); // Resume hook
         }
         else
         {
+            MouseHook.Stop(); // Pause hook while menu is open
             UpdateAutoStartCheckbox();
             MenuPopup.IsOpen = true;
         }
@@ -170,6 +175,7 @@ public partial class MainWindow : Window
     private void MenuSettings_Click(object sender, MouseButtonEventArgs e)
     {
         MenuPopup.IsOpen = false;
+        MouseHook.Start();
         e.Handled = true;
         Dispatcher.BeginInvoke(() => OpenSettings());
     }
@@ -177,6 +183,7 @@ public partial class MainWindow : Window
     private void MenuChangePosition_Click(object sender, MouseButtonEventArgs e)
     {
         MenuPopup.IsOpen = false;
+        MouseHook.Start();
         e.Handled = true;
         Dispatcher.BeginInvoke(() => EnterMoveMode());
     }
@@ -194,6 +201,7 @@ public partial class MainWindow : Window
     private void MenuAbout_Click(object sender, MouseButtonEventArgs e)
     {
         MenuPopup.IsOpen = false;
+        MouseHook.Start();
         e.Handled = true;
         Dispatcher.BeginInvoke(() =>
         {
