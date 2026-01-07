@@ -11,6 +11,16 @@ if (Test-Path ".\publish\install") {
 }
 
 New-Item -ItemType Directory -Path ".\publish\install" -Force | Out-Null
+New-Item -ItemType Directory -Path ".\publish\install\languages" -Force | Out-Null
+
+# Copy custom language files
+Copy-Item ".\installer\Indonesian.isl" ".\publish\install\languages\" -Force
+Copy-Item ".\installer\Kazakh.isl" ".\publish\install\languages\" -Force
+
+# Copy icon for installer
+if (Test-Path ".\fajr.ico") {
+    Copy-Item ".\fajr.ico" ".\publish\install\" -Force
+}
 
 # Build Release
 dotnet publish -c Release -o ".\publish\install\files" --no-self-contained
@@ -45,7 +55,8 @@ AllowNoIcons=yes
 LicenseFile=
 OutputDir=.
 OutputBaseFilename=FajrApp-Setup-{#MyAppVersion}
-SetupIconFile=
+SetupIconFile=fajr.ico
+UninstallDisplayIcon={app}\{#MyAppExeName}
 Compression=lzma
 SolidCompression=yes
 WizardStyle=modern
@@ -56,6 +67,9 @@ PrivilegesRequiredOverridesAllowed=dialog
 Name: "english"; MessagesFile: "compiler:Default.isl"
 Name: "russian"; MessagesFile: "compiler:Languages\Russian.isl"
 Name: "spanish"; MessagesFile: "compiler:Languages\Spanish.isl"
+Name: "arabic"; MessagesFile: "compiler:Languages\Arabic.isl"
+Name: "indonesian"; MessagesFile: "languages\Indonesian.isl"
+Name: "kazakh"; MessagesFile: "languages\Kazakh.isl"
 
 [Tasks]
 Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{cm:AdditionalIcons}"; Flags: unchecked
@@ -65,9 +79,9 @@ Name: "autostart"; Description: "Start with Windows"; GroupDescription: "Additio
 Source: "files\*"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs createallsubdirs
 
 [Icons]
-Name: "{group}\{#MyAppName}"; Filename: "{app}\{#MyAppExeName}"
+Name: "{group}\{#MyAppName}"; Filename: "{app}\{#MyAppExeName}"; IconFilename: "{app}\{#MyAppExeName}"
 Name: "{group}\{cm:UninstallProgram,{#MyAppName}}"; Filename: "{uninstallexe}"
-Name: "{autodesktop}\{#MyAppName}"; Filename: "{app}\{#MyAppExeName}"; Tasks: desktopicon
+Name: "{autodesktop}\{#MyAppName}"; Filename: "{app}\{#MyAppExeName}"; IconFilename: "{app}\{#MyAppExeName}"; Tasks: desktopicon
 
 [Registry]
 Root: HKCU; Subkey: "Software\Microsoft\Windows\CurrentVersion\Run"; ValueType: string; ValueName: "FajrApp"; ValueData: """{app}\{#MyAppExeName}"""; Flags: uninsdeletevalue; Tasks: autostart
