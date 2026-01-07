@@ -82,6 +82,16 @@ public partial class SettingsWindow : Window
         MaghribLabel.Text = LocalizationService.T("Maghrib");
         IshaLabel.Text = LocalizationService.T("Isha");
         
+        // Notifications section
+        NotificationsSectionHeader.Text = $"🔔 {LocalizationService.T("Notifications")}";
+        NotificationsEnabledCheckBox.Content = LocalizationService.T("EnableNotifications");
+        NotificationSoundLabel.Text = LocalizationService.T("NotificationSound");
+        SoundNoneItem.Content = LocalizationService.T("SoundNone");
+        SoundSystemItem.Content = LocalizationService.T("SoundSystem");
+        SoundAzanItem.Content = LocalizationService.T("SoundAzan");
+        AzanHintText.Text = $"💡 {LocalizationService.T("AzanHint")}";
+        OpenSoundsFolderButton.Content = $"📁 {LocalizationService.T("OpenSoundsFolder")}";
+        
         // Buttons
         CancelButton.Content = LocalizationService.T("Cancel");
         SaveButton.Content = LocalizationService.T("Save");
@@ -136,6 +146,10 @@ public partial class SettingsWindow : Window
         
         // Asr method
         AsrMethodComboBox.SelectedIndex = (int)_settings.AsrMethod;
+        
+        // Notification settings
+        NotificationsEnabledCheckBox.IsChecked = _settings.NotificationsEnabled;
+        NotificationSoundComboBox.SelectedIndex = (int)_settings.NotificationSound;
     }
     
     private void PopulateMethodComboBox()
@@ -436,6 +450,13 @@ public partial class SettingsWindow : Window
             if (int.TryParse(IshaOffsetTextBox.Text, out var ishaOffset))
                 _settings.IshaOffset = ishaOffset;
             
+            // Notification settings
+            _settings.NotificationsEnabled = NotificationsEnabledCheckBox.IsChecked ?? true;
+            if (NotificationSoundComboBox.SelectedItem is ComboBoxItem selectedSound)
+            {
+                _settings.NotificationSound = (NotificationSoundType)int.Parse(selectedSound.Tag?.ToString() ?? "1");
+            }
+            
             // Clear cache when settings change
             _settings.CachedTimes = null;
             
@@ -455,5 +476,24 @@ public partial class SettingsWindow : Window
     {
         DialogResult = false;
         Close();
+    }
+    
+    private void OpenSoundsFolder_Click(object sender, RoutedEventArgs e)
+    {
+        try
+        {
+            NotificationService.EnsureSoundsFolderExists();
+            var soundsFolder = NotificationService.GetSoundsFolder();
+            System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo
+            {
+                FileName = soundsFolder,
+                UseShellExecute = true
+            });
+        }
+        catch (Exception ex)
+        {
+            MessageBox.Show($"Error opening folder: {ex.Message}", "Error", 
+                MessageBoxButton.OK, MessageBoxImage.Error);
+        }
     }
 }

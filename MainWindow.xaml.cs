@@ -17,6 +17,10 @@ public partial class MainWindow : Window
     private AppSettings _settings;
     private PrayerTimesWindow? _prayerTimesWindow;
     
+    // Notification tracking
+    private string _lastNotifiedPrayer = "";
+    private DateTime _lastNotifiedDate = DateTime.MinValue;
+    
     // Move mode state
     private bool _isInMoveMode;
     private bool _isDragging;
@@ -442,6 +446,63 @@ public partial class MainWindow : Window
         else
         {
             Countdown.Text = $"{remaining.Minutes:D2}:{remaining.Seconds:D2}";
+        }
+        
+        // Check for prayer time notification
+        CheckAndNotifyPrayerTime(_currentTimes);
+    }
+    
+    private void CheckAndNotifyPrayerTime(PrayerTimes times)
+    {
+        if (!_settings.NotificationsEnabled) return;
+        
+        var now = DateTime.Now;
+        var today = DateTime.Today;
+        
+        // Reset notification tracking for new day
+        if (_lastNotifiedDate.Date != today)
+        {
+            _lastNotifiedPrayer = "";
+            _lastNotifiedDate = today;
+        }
+        
+        // Check each prayer time
+        var prayers = new[]
+        {
+            ("Fajr", times.Fajr, true),
+            ("Sunrise", times.Sunrise, false),
+            ("Dhuhr", times.Dhuhr, false),
+            ("Asr", times.Asr, false),
+            ("Maghrib", times.Maghrib, false),
+            ("Isha", times.Isha, false)
+        };
+        
+        foreach (var (prayerKey, prayerTime, isFajr) in prayers)
+        {
+            // Skip if already notified for this prayer today
+            if (_lastNotifiedPrayer == prayerKey) continue;
+            
+            // Skip Sunrise notifications (it's not a prayer)
+            if (prayerKey == "Sunrise") continue;
+            
+            // Check if we're within 30 seconds of prayer time
+            var timeDiff = (now - prayerTime).TotalSeconds;
+            if (timeDiff >= 0 && timeDiff < 30)
+            {
+                _lastNotifiedPrayer = prayerKey;
+                _lastNotifiedDate = today;
+                
+                var localizedName = LocalizationService.T(prayerKey);
+                var formattedTime = prayerTime.ToString("HH:mm");
+                
+                NotificationService.NotifyPrayerTime(
+                    localizedName, 
+                    formattedTime, 
+                    _settings.NotificationSound,
+                    isFajr);
+                
+                break;
+            }
         }
     }
     

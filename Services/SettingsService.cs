@@ -22,6 +22,10 @@ public class AppSettings
     // Widget position offset from default (in pixels)
     public double WidgetOffsetX { get; set; } = 0;
     
+    // Notification settings
+    public bool NotificationsEnabled { get; set; } = true;
+    public NotificationSoundType NotificationSound { get; set; } = NotificationSoundType.System;
+    
     // Time offsets in minutes
     public int FajrOffset { get; set; } = 0;
     public int SunriseOffset { get; set; } = 0;

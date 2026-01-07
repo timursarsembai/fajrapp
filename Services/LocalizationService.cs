@@ -83,6 +83,17 @@ public static class LocalizationService
                 { "GitHub", "GitHub" },
                 { "Close", "Close" },
                 
+                // Notifications
+                { "Notifications", "Notifications" },
+                { "EnableNotifications", "Enable notifications" },
+                { "NotificationSound", "Notification sound" },
+                { "SoundNone", "None" },
+                { "SoundSystem", "System sound" },
+                { "SoundAzan", "Azan" },
+                { "AzanHint", "To use Azan, add azan.mp3 and azan_fajr.mp3 files to the Sounds folder" },
+                { "OpenSoundsFolder", "Open Sounds folder" },
+                { "PrayerTime", "Prayer time" },
+                
                 // Calculation methods
                 { "MethodMuslimWorldLeague", "Muslim World League" },
                 { "MethodISNA", "ISNA (North America)" },
@@ -155,6 +166,17 @@ public static class LocalizationService
                 { "GitHub", "GitHub" },
                 { "Close", "Cerrar" },
                 
+                // Notifications
+                { "Notifications", "Notificaciones" },
+                { "EnableNotifications", "Habilitar notificaciones" },
+                { "NotificationSound", "Sonido de notificación" },
+                { "SoundNone", "Ninguno" },
+                { "SoundSystem", "Sonido del sistema" },
+                { "SoundAzan", "Adhan" },
+                { "AzanHint", "Para usar Adhan, agregue archivos azan.mp3 y azan_fajr.mp3 a la carpeta Sounds" },
+                { "OpenSoundsFolder", "Abrir carpeta Sounds" },
+                { "PrayerTime", "Hora de oración" },
+                
                 { "MethodMuslimWorldLeague", "Liga Mundial Musulmana" },
                 { "MethodISNA", "ISNA (Norteamérica)" },
                 { "MethodEgypt", "Autoridad General de Egipto" },
@@ -225,6 +247,17 @@ public static class LocalizationService
                 { "DeveloperName", "تيمور سارسمباي" },
                 { "GitHub", "GitHub" },
                 { "Close", "إغلاق" },
+                
+                // Notifications
+                { "Notifications", "الإشعارات" },
+                { "EnableNotifications", "تفعيل الإشعارات" },
+                { "NotificationSound", "صوت الإشعار" },
+                { "SoundNone", "بدون صوت" },
+                { "SoundSystem", "صوت النظام" },
+                { "SoundAzan", "الأذان" },
+                { "AzanHint", "لاستخدام الأذان، أضف ملفات azan.mp3 و azan_fajr.mp3 إلى مجلد Sounds" },
+                { "OpenSoundsFolder", "فتح مجلد Sounds" },
+                { "PrayerTime", "وقت الصلاة" },
                 
                 { "MethodMuslimWorldLeague", "رابطة العالم الإسلامي" },
                 { "MethodISNA", "ISNA (أمريكا الشمالية)" },
@@ -297,6 +330,17 @@ public static class LocalizationService
                 { "GitHub", "GitHub" },
                 { "Close", "Закрыть" },
                 
+                // Notifications
+                { "Notifications", "Уведомления" },
+                { "EnableNotifications", "Включить уведомления" },
+                { "NotificationSound", "Звук уведомления" },
+                { "SoundNone", "Без звука" },
+                { "SoundSystem", "Системный звук" },
+                { "SoundAzan", "Азан" },
+                { "AzanHint", "Для использования азана добавьте файлы azan.mp3 и azan_fajr.mp3 в папку Sounds" },
+                { "OpenSoundsFolder", "Открыть папку Sounds" },
+                { "PrayerTime", "Время намаза" },
+                
                 { "MethodMuslimWorldLeague", "Всемирная исламская лига" },
                 { "MethodISNA", "ISNA (Северная Америка)" },
                 { "MethodEgypt", "Египетское управление" },
@@ -368,6 +412,17 @@ public static class LocalizationService
                 { "GitHub", "GitHub" },
                 { "Close", "Tutup" },
                 
+                // Notifications
+                { "Notifications", "Notifikasi" },
+                { "EnableNotifications", "Aktifkan notifikasi" },
+                { "NotificationSound", "Suara notifikasi" },
+                { "SoundNone", "Tidak ada" },
+                { "SoundSystem", "Suara sistem" },
+                { "SoundAzan", "Azan" },
+                { "AzanHint", "Untuk menggunakan Azan, tambahkan file azan.mp3 dan azan_fajr.mp3 ke folder Sounds" },
+                { "OpenSoundsFolder", "Buka folder Sounds" },
+                { "PrayerTime", "Waktu sholat" },
+                
                 { "MethodMuslimWorldLeague", "Liga Muslim Dunia" },
                 { "MethodISNA", "ISNA (Amerika Utara)" },
                 { "MethodEgypt", "Otoritas Umum Mesir" },
@@ -438,6 +493,17 @@ public static class LocalizationService
                 { "DeveloperName", "Тимур Сарсембай" },
                 { "GitHub", "GitHub" },
                 { "Close", "Жабу" },
+                
+                // Notifications
+                { "Notifications", "Хабарландырулар" },
+                { "EnableNotifications", "Хабарландыруларды қосу" },
+                { "NotificationSound", "Хабарландыру дыбысы" },
+                { "SoundNone", "Дыбыссыз" },
+                { "SoundSystem", "Жүйелік дыбыс" },
+                { "SoundAzan", "Азан" },
+                { "AzanHint", "Азанды пайдалану үшін Sounds папкасына azan.mp3 және azan_fajr.mp3 файлдарын қосыңыз" },
+                { "OpenSoundsFolder", "Sounds папкасын ашу" },
+                { "PrayerTime", "Намаз уақыты" },
                 
                 { "MethodMuslimWorldLeague", "Бүкіләлемдік ислам лигасы" },
                 { "MethodISNA", "ISNA (Солтүстік Америка)" },

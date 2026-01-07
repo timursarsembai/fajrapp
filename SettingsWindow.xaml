@@ -3,7 +3,7 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         Title="Настройки - FajrApp"
         Width="480"
-        Height="600"
+        Height="720"
         WindowStartupLocation="CenterScreen"
         ResizeMode="NoResize"
         Background="#1E1E1E"
@@ -267,7 +267,7 @@
                 
                 <!-- Time Offsets Section -->
                 <TextBlock x:Name="OffsetsSectionHeader" Text="⏱️ Time Offsets (minutes)" Style="{StaticResource SectionHeader}"/>
-                
+
                 <Grid>
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="*"/>
@@ -312,6 +312,35 @@
                         <TextBox x:Name="IshaOffsetTextBox"/>
                     </StackPanel>
                 </Grid>
+                
+                <!-- Notifications Section -->
+                <TextBlock x:Name="NotificationsSectionHeader" Text="🔔 Notifications" Style="{StaticResource SectionHeader}"/>
+                
+                <CheckBox x:Name="NotificationsEnabledCheckBox" 
+                          Content="Enable notifications"
+                          Margin="0,0,0,12"/>
+                
+                <StackPanel x:Name="NotificationSoundPanel" Margin="0,0,0,8">
+                    <TextBlock x:Name="NotificationSoundLabel" Text="Notification sound" Margin="0,0,0,4"/>
+                    <ComboBox x:Name="NotificationSoundComboBox">
+                        <ComboBoxItem x:Name="SoundNoneItem" Content="None" Tag="0"/>
+                        <ComboBoxItem x:Name="SoundSystemItem" Content="System sound" Tag="1"/>
+                        <ComboBoxItem x:Name="SoundAzanItem" Content="Azan" Tag="2"/>
+                    </ComboBox>
+                </StackPanel>
+                
+                <TextBlock x:Name="AzanHintText" 
+                           Text="💡 To use Azan, add azan.mp3 and azan_fajr.mp3 files to the Sounds folder"
+                           Foreground="#808080"
+                           FontSize="11"
+                           TextWrapping="Wrap"
+                           Margin="0,0,0,8"/>
+                
+                <Button x:Name="OpenSoundsFolderButton"
+                        Content="📁 Open Sounds folder"
+                        Click="OpenSoundsFolder_Click"
+                        HorizontalAlignment="Left"
+                        Style="{StaticResource SecondaryButton}"/>
             </StackPanel>
         </ScrollViewer>
         
