@@ -25,6 +25,38 @@ public static class VirtualDesktopHelper
     [DllImport("user32.dll")]
     private static extern bool ShowWindow(IntPtr hWnd, int nCmdShow);
     
+    [DllImport("user32.dll")]
+    private static extern IntPtr GetForegroundWindow();
+    
+    [DllImport("user32.dll")]
+    private static extern bool GetWindowRect(IntPtr hWnd, out RECT lpRect);
+    
+    [DllImport("user32.dll")]
+    private static extern IntPtr MonitorFromWindow(IntPtr hwnd, uint dwFlags);
+    
+    [DllImport("user32.dll")]
+    private static extern bool GetMonitorInfo(IntPtr hMonitor, ref MONITORINFO lpmi);
+    
+    [StructLayout(LayoutKind.Sequential)]
+    private struct RECT
+    {
+        public int Left;
+        public int Top;
+        public int Right;
+        public int Bottom;
+    }
+    
+    [StructLayout(LayoutKind.Sequential)]
+    private struct MONITORINFO
+    {
+        public int cbSize;
+        public RECT rcMonitor;
+        public RECT rcWork;
+        public uint dwFlags;
+    }
+    
+    private const uint MONITOR_DEFAULTTONEAREST = 2;
+    
     private const int GWL_EXSTYLE = -20;
     private const int WS_EX_TOOLWINDOW = 0x00000080;
     private const int WS_EX_APPWINDOW = 0x00040000;
@@ -43,6 +75,46 @@ public static class VirtualDesktopHelper
     private static DispatcherTimer? _visibilityTimer;
     private static Window? _pinnedWindow;
     private static IntPtr _windowHandle;
+    private static bool _wasHiddenForFullscreen = false;
+    
+    /// <summary>
+    /// Checks if there's a fullscreen application running in the foreground
+    /// </summary>
+    public static bool IsFullscreenAppRunning()
+    {
+        try
+        {
+            IntPtr foregroundWindow = GetForegroundWindow();
+            if (foregroundWindow == IntPtr.Zero) return false;
+            
+            // Don't hide if our own window is in foreground
+            if (foregroundWindow == _windowHandle) return false;
+            
+            // Get the monitor where the foreground window is
+            IntPtr monitor = MonitorFromWindow(foregroundWindow, MONITOR_DEFAULTTONEAREST);
+            if (monitor == IntPtr.Zero) return false;
+            
+            MONITORINFO monitorInfo = new MONITORINFO();
+            monitorInfo.cbSize = Marshal.SizeOf(typeof(MONITORINFO));
+            if (!GetMonitorInfo(monitor, ref monitorInfo)) return false;
+            
+            // Get window rect
+            if (!GetWindowRect(foregroundWindow, out RECT windowRect)) return false;
+            
+            // Check if window covers the entire monitor (fullscreen)
+            bool isFullscreen = 
+                windowRect.Left <= monitorInfo.rcMonitor.Left &&
+                windowRect.Top <= monitorInfo.rcMonitor.Top &&
+                windowRect.Right >= monitorInfo.rcMonitor.Right &&
+                windowRect.Bottom >= monitorInfo.rcMonitor.Bottom;
+            
+            return isFullscreen;
+        }
+        catch
+        {
+            return false;
+        }
+    }
     
     /// <summary>
     /// Makes the window appear on all virtual desktops and maintains visibility
@@ -108,8 +180,28 @@ public static class VirtualDesktopHelper
             
             try
             {
+                // Check if fullscreen app is running
+                bool isFullscreen = IsFullscreenAppRunning();
+                
+                if (isFullscreen)
+                {
+                    // Hide widget when fullscreen app is active
+                    if (_pinnedWindow.Visibility == Visibility.Visible)
+                    {
+                        _pinnedWindow.Visibility = Visibility.Hidden;
+                        _wasHiddenForFullscreen = true;
+                    }
+                    return;
+                }
+                else if (_wasHiddenForFullscreen)
+                {
+                    // Restore widget when fullscreen app closes
+                    _pinnedWindow.Visibility = Visibility.Visible;
+                    _wasHiddenForFullscreen = false;
+                }
+                
                 // Check if window is visible
-                if (!IsWindowVisible(_windowHandle))
+                if (!IsWindowVisible(_windowHandle) && !_wasHiddenForFullscreen)
                 {
                     // Force show
                     ShowWindow(_windowHandle, SW_SHOWNOACTIVATE);

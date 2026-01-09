@@ -94,6 +94,10 @@ public static class ThemeManager
                 {
                     border.Background = new SolidColorBrush(inputBackgroundColor);
                 }
+                else if (color.R == 42 && color.G == 42 && color.B == 42) // #2A2A2A (hijri date block)
+                {
+                    border.Background = new SolidColorBrush(inputBackgroundColor);
+                }
             }
             
             // Update border colors
