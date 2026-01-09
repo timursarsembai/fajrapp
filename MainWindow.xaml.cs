@@ -340,6 +340,52 @@ public partial class MainWindow : Window
         
         // Setup periodic retry for failed data loads
         SetupPeriodicRetry();
+        
+        // Check for updates in background (after 5 seconds delay)
+        await CheckForUpdatesInBackground();
+    }
+    
+    private async System.Threading.Tasks.Task CheckForUpdatesInBackground()
+    {
+        try
+        {
+            // Wait 5 seconds to let the app fully load
+            await System.Threading.Tasks.Task.Delay(5000);
+            
+            var updateInfo = await UpdateService.CheckForUpdatesAsync();
+            
+            if (updateInfo != null && updateInfo.IsNewVersion)
+            {
+                // Show notification about update
+                Dispatcher.Invoke(() =>
+                {
+                    var message = string.Format(LocalizationService.T("NewVersionAvailable"),
+                        updateInfo.Version, UpdateService.GetCurrentVersion());
+                    
+                    var result = MessageBox.Show(
+                        message,
+                        LocalizationService.T("UpdateAvailable"),
+                        MessageBoxButton.YesNo,
+                        MessageBoxImage.Information);
+                    
+                    if (result == MessageBoxResult.Yes)
+                    {
+                        if (!string.IsNullOrEmpty(updateInfo.DownloadUrl))
+                        {
+                            _ = UpdateService.DownloadAndInstallAsync(updateInfo.DownloadUrl);
+                        }
+                        else
+                        {
+                            UpdateService.OpenReleasesPage(updateInfo.HtmlUrl);
+                        }
+                    }
+                });
+            }
+        }
+        catch
+        {
+            // Silently ignore update check errors on startup
+        }
     }
     
     private void MainWindow_SizeChanged(object sender, SizeChangedEventArgs e)

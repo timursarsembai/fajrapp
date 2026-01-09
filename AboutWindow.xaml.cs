@@ -8,8 +8,8 @@ namespace FajrApp;
 
 public partial class AboutWindow : Window
 {
-    public const string AppVersion = "1.0.0";
-    public const string UpdateDate = "January 7, 2026";
+    public const string AppVersion = "1.3.0";
+    public const string UpdateDate = "January 10, 2026";
     public const string GitHubUrl = "https://github.com/timursarsembai/fajrapp";
     
     private bool _isClosing = false;

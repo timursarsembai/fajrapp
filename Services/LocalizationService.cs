@@ -130,7 +130,21 @@ public static class LocalizationService
                 { "MethodTurkey", "Diyanet (Turkey)" },
                 { "MethodRussia", "Russia" },
                 { "MethodDubai", "Dubai" },
-                { "MethodMoonsighting", "Moonsighting Committee" }
+                { "MethodMoonsighting", "Moonsighting Committee" },
+                
+                // Updates
+                { "Updates", "Updates" },
+                { "CheckForUpdates", "Check for updates" },
+                { "CheckingUpdates", "Checking for updates..." },
+                { "UpdateAvailable", "Update available" },
+                { "NewVersionAvailable", "A new version {0} is available! You have {1}." },
+                { "DownloadUpdate", "Download" },
+                { "SkipUpdate", "Skip" },
+                { "Downloading", "Downloading..." },
+                { "DownloadProgress", "Downloading: {0}%" },
+                { "UpdateNotAvailable", "You have the latest version" },
+                { "UpdateCheckFailed", "Failed to check for updates" },
+                { "CurrentVersion", "Current version: {0}" }
             }
         },
         
@@ -232,7 +246,21 @@ public static class LocalizationService
                 { "MethodTurkey", "Diyanet (Turquía)" },
                 { "MethodRussia", "Rusia" },
                 { "MethodDubai", "Dubai" },
-                { "MethodMoonsighting", "Comité Moonsighting" }
+                { "MethodMoonsighting", "Comité Moonsighting" },
+                
+                // Updates
+                { "Updates", "Actualizaciones" },
+                { "CheckForUpdates", "Buscar actualizaciones" },
+                { "CheckingUpdates", "Buscando actualizaciones..." },
+                { "UpdateAvailable", "Actualización disponible" },
+                { "NewVersionAvailable", "¡Una nueva versión {0} está disponible! Tienes {1}." },
+                { "DownloadUpdate", "Descargar" },
+                { "SkipUpdate", "Omitir" },
+                { "Downloading", "Descargando..." },
+                { "DownloadProgress", "Descargando: {0}%" },
+                { "UpdateNotAvailable", "Tienes la última versión" },
+                { "UpdateCheckFailed", "No se pudo buscar actualizaciones" },
+                { "CurrentVersion", "Versión actual: {0}" }
             }
         },
         
@@ -334,7 +362,21 @@ public static class LocalizationService
                 { "MethodTurkey", "ديانت (تركيا)" },
                 { "MethodRussia", "روسيا" },
                 { "MethodDubai", "دبي" },
-                { "MethodMoonsighting", "لجنة رؤية الهلال" }
+                { "MethodMoonsighting", "لجنة رؤية الهلال" },
+                
+                // Updates
+                { "Updates", "التحديثات" },
+                { "CheckForUpdates", "البحث عن تحديثات" },
+                { "CheckingUpdates", "جارٍ البحث عن تحديثات..." },
+                { "UpdateAvailable", "تحديث متاح" },
+                { "NewVersionAvailable", "إصدار جديد {0} متاح! لديك {1}." },
+                { "DownloadUpdate", "تحميل" },
+                { "SkipUpdate", "تخطي" },
+                { "Downloading", "جارٍ التحميل..." },
+                { "DownloadProgress", "جارٍ التحميل: {0}%" },
+                { "UpdateNotAvailable", "لديك أحدث إصدار" },
+                { "UpdateCheckFailed", "فشل البحث عن تحديثات" },
+                { "CurrentVersion", "الإصدار الحالي: {0}" }
             }
         },
         
@@ -436,7 +478,21 @@ public static class LocalizationService
                 { "MethodTurkey", "Диянет (Турция)" },
                 { "MethodRussia", "Россия" },
                 { "MethodDubai", "Дубай" },
-                { "MethodMoonsighting", "Moonsighting Committee" }
+                { "MethodMoonsighting", "Moonsighting Committee" },
+                
+                // Updates
+                { "Updates", "Обновления" },
+                { "CheckForUpdates", "Проверить обновления" },
+                { "CheckingUpdates", "Проверка обновлений..." },
+                { "UpdateAvailable", "Доступно обновление" },
+                { "NewVersionAvailable", "Доступна новая версия {0}! У вас {1}." },
+                { "DownloadUpdate", "Скачать" },
+                { "SkipUpdate", "Пропустить" },
+                { "Downloading", "Загрузка..." },
+                { "DownloadProgress", "Загрузка: {0}%" },
+                { "UpdateNotAvailable", "У вас последняя версия" },
+                { "UpdateCheckFailed", "Не удалось проверить обновления" },
+                { "CurrentVersion", "Текущая версия: {0}" }
             }
         },
         
@@ -538,7 +594,21 @@ public static class LocalizationService
                 { "MethodTurkey", "Diyanet (Turki)" },
                 { "MethodRussia", "Rusia" },
                 { "MethodDubai", "Dubai" },
-                { "MethodMoonsighting", "Komite Moonsighting" }
+                { "MethodMoonsighting", "Komite Moonsighting" },
+                
+                // Updates
+                { "Updates", "Pembaruan" },
+                { "CheckForUpdates", "Periksa pembaruan" },
+                { "CheckingUpdates", "Memeriksa pembaruan..." },
+                { "UpdateAvailable", "Pembaruan tersedia" },
+                { "NewVersionAvailable", "Versi baru {0} tersedia! Anda memiliki {1}." },
+                { "DownloadUpdate", "Unduh" },
+                { "SkipUpdate", "Lewati" },
+                { "Downloading", "Mengunduh..." },
+                { "DownloadProgress", "Mengunduh: {0}%" },
+                { "UpdateNotAvailable", "Anda memiliki versi terbaru" },
+                { "UpdateCheckFailed", "Gagal memeriksa pembaruan" },
+                { "CurrentVersion", "Versi saat ini: {0}" }
             }
         },
         
@@ -640,7 +710,21 @@ public static class LocalizationService
                 { "MethodTurkey", "Диянет (Түркия)" },
                 { "MethodRussia", "Ресей" },
                 { "MethodDubai", "Дубай" },
-                { "MethodMoonsighting", "Moonsighting Committee" }
+                { "MethodMoonsighting", "Moonsighting Committee" },
+                
+                // Updates
+                { "Updates", "Жаңартулар" },
+                { "CheckForUpdates", "Жаңартуларды тексеру" },
+                { "CheckingUpdates", "Жаңартулар тексерілуде..." },
+                { "UpdateAvailable", "Жаңарту қолжетімді" },
+                { "NewVersionAvailable", "Жаңа нұсқа {0} қолжетімді! Сізде {1}." },
+                { "DownloadUpdate", "Жүктеу" },
+                { "SkipUpdate", "Өткізу" },
+                { "Downloading", "Жүктелуде..." },
+                { "DownloadProgress", "Жүктелуде: {0}%" },
+                { "UpdateNotAvailable", "Сізде соңғы нұсқа" },
+                { "UpdateCheckFailed", "Жаңартуларды тексеру сәтсіз" },
+                { "CurrentVersion", "Ағымдағы нұсқа: {0}" }
             }
         }
     };

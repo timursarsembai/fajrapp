@@ -81,7 +81,7 @@ public partial class SettingsWindow : Window
     private void ApplyTabButtonStyles()
     {
         var buttons = new[] { LanguageTabButton, LocationTabButton, MethodTabButton, 
-                              OffsetsTabButton, NotificationsTabButton, AppearanceTabButton };
+                              OffsetsTabButton, NotificationsTabButton, AppearanceTabButton, UpdatesTabButton };
         
         // Get the appropriate style based on theme
         var styleName = _settings.Theme == AppTheme.Light ? "TabButtonStyleLight" : "TabButtonStyleDark";
@@ -126,6 +126,7 @@ public partial class SettingsWindow : Window
             OffsetsTabButton.Tag = null;
             NotificationsTabButton.Tag = null;
             AppearanceTabButton.Tag = null;
+            UpdatesTabButton.Tag = null;
             
             button.Tag = "Selected";
             
@@ -161,6 +162,9 @@ public partial class SettingsWindow : Window
                 break;
             case "Appearance":
                 ShowAppearanceTab();
+                break;
+            case "Updates":
+                ShowUpdatesTab();
                 break;
         }
     }
@@ -404,6 +408,139 @@ public partial class SettingsWindow : Window
         AddToContent(OpacitySlider);
     }
     
+    private TextBlock? _updateStatusText;
+    private Button? _checkUpdatesButton;
+    private ProgressBar? _updateProgressBar;
+    
+    private void ShowUpdatesTab()
+    {
+        var header = new TextBlock
+        {
+            Text = LocalizationService.T("Updates"),
+            FontSize = 18,
+            FontWeight = FontWeights.SemiBold,
+            Foreground = TextColor,
+            Margin = new Thickness(0, 0, 0, 16)
+        };
+        ContentPanel.Children.Add(header);
+        
+        // Current version info
+        var versionInfo = new TextBlock
+        {
+            Text = string.Format(LocalizationService.T("CurrentVersion"), UpdateService.GetCurrentVersion()),
+            Foreground = TextColor,
+            Margin = new Thickness(0, 0, 0, 16)
+        };
+        ContentPanel.Children.Add(versionInfo);
+        
+        // Check for updates button
+        _checkUpdatesButton = new Button
+        {
+            Content = $"🔄 {LocalizationService.T("CheckForUpdates")}",
+            HorizontalAlignment = HorizontalAlignment.Left,
+            Padding = new Thickness(16, 10, 16, 10)
+        };
+        _checkUpdatesButton.Click += CheckForUpdates_Click;
+        ContentPanel.Children.Add(_checkUpdatesButton);
+        
+        // Progress bar (hidden by default)
+        _updateProgressBar = new ProgressBar
+        {
+            Height = 6,
+            Margin = new Thickness(0, 16, 0, 0),
+            Visibility = Visibility.Collapsed,
+            Maximum = 100,
+            Value = 0
+        };
+        ContentPanel.Children.Add(_updateProgressBar);
+        
+        // Status text
+        _updateStatusText = new TextBlock
+        {
+            Foreground = TextColor,
+            Margin = new Thickness(0, 16, 0, 0),
+            TextWrapping = TextWrapping.Wrap
+        };
+        ContentPanel.Children.Add(_updateStatusText);
+    }
+    
+    private async void CheckForUpdates_Click(object sender, RoutedEventArgs e)
+    {
+        if (_checkUpdatesButton == null || _updateStatusText == null) return;
+        
+        _checkUpdatesButton.IsEnabled = false;
+        _updateStatusText.Text = LocalizationService.T("CheckingUpdates");
+        
+        try
+        {
+            var updateInfo = await UpdateService.CheckForUpdatesAsync();
+            
+            if (updateInfo == null)
+            {
+                _updateStatusText.Text = LocalizationService.T("UpdateCheckFailed");
+            }
+            else if (updateInfo.IsNewVersion)
+            {
+                var message = string.Format(LocalizationService.T("NewVersionAvailable"), 
+                    updateInfo.Version, UpdateService.GetCurrentVersion());
+                
+                var result = MessageBox.Show(
+                    message,
+                    LocalizationService.T("UpdateAvailable"),
+                    MessageBoxButton.YesNo,
+                    MessageBoxImage.Information);
+                
+                if (result == MessageBoxResult.Yes)
+                {
+                    if (!string.IsNullOrEmpty(updateInfo.DownloadUrl))
+                    {
+                        _updateStatusText.Text = LocalizationService.T("Downloading");
+                        if (_updateProgressBar != null)
+                        {
+                            _updateProgressBar.Visibility = Visibility.Visible;
+                        }
+                        
+                        await UpdateService.DownloadAndInstallAsync(updateInfo.DownloadUrl, progress =>
+                        {
+                            Dispatcher.Invoke(() =>
+                            {
+                                if (_updateProgressBar != null)
+                                {
+                                    _updateProgressBar.Value = progress;
+                                }
+                                if (_updateStatusText != null)
+                                {
+                                    _updateStatusText.Text = string.Format(LocalizationService.T("DownloadProgress"), progress);
+                                }
+                            });
+                        });
+                    }
+                    else
+                    {
+                        // No direct download, open releases page
+                        UpdateService.OpenReleasesPage(updateInfo.HtmlUrl);
+                    }
+                }
+                else
+                {
+                    _updateStatusText.Text = "";
+                }
+            }
+            else
+            {
+                _updateStatusText.Text = $"✅ {LocalizationService.T("UpdateNotAvailable")}";
+            }
+        }
+        catch (Exception ex)
+        {
+            _updateStatusText.Text = $"{LocalizationService.T("UpdateCheckFailed")}: {ex.Message}";
+        }
+        finally
+        {
+            _checkUpdatesButton.IsEnabled = true;
+        }
+    }
+    
     private void UpdateLocalization()
     {
         Title = LocalizationService.T("SettingsTitle");
@@ -415,6 +552,7 @@ public partial class SettingsWindow : Window
         OffsetsTabButton.Content = $"⏱️ {LocalizationService.T("TimeOffsets")}";
         NotificationsTabButton.Content = $"🔔 {LocalizationService.T("Notifications")}";
         AppearanceTabButton.Content = $"🎨 {LocalizationService.T("Appearance")}";
+        UpdatesTabButton.Content = $"🔄 {LocalizationService.T("Updates")}";
         
         // Language section
         LanguageLabel.Text = LocalizationService.T("Language");

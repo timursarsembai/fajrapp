@@ -287,6 +287,11 @@
                         Style="{StaticResource TabButtonStyle}"
                         Content="🎨 Appearance"
                         Click="TabButton_Click"/>
+                
+                <Button x:Name="UpdatesTabButton" 
+                        Style="{StaticResource TabButtonStyle}"
+                        Content="🔄 Updates"
+                        Click="TabButton_Click"/>
             </StackPanel>
         </Border>
         
