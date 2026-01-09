@@ -8,7 +8,7 @@
         ShowInTaskbar="False"
         Topmost="True"
         SizeToContent="Width"
-        Height="40"
+        Height="52"
         ResizeMode="NoResize">
     
     <Window.Resources>
@@ -21,29 +21,28 @@
         
         <Style x:Key="PrayerNameStyle" TargetType="TextBlock" BasedOn="{StaticResource WidgetTextStyle}">
             <Setter Property="FontWeight" Value="SemiBold"/>
-            <Setter Property="Opacity" Value="0.9"/>
+            <Setter Property="FontSize" Value="13"/>
+            <Setter Property="Opacity" Value="0.95"/>
         </Style>
         
         <Style x:Key="TimeStyle" TargetType="TextBlock" BasedOn="{StaticResource WidgetTextStyle}">
-            <Setter Property="Opacity" Value="0.85"/>
-        </Style>
-        
-        <Style x:Key="SeparatorStyle" TargetType="TextBlock" BasedOn="{StaticResource WidgetTextStyle}">
-            <Setter Property="Text" Value="|"/>
-            <Setter Property="Margin" Value="8,0"/>
-            <Setter Property="Opacity" Value="0.5"/>
+            <Setter Property="FontSize" Value="13"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="Opacity" Value="0.95"/>
         </Style>
         
         <Style x:Key="CountdownLabelStyle" TargetType="TextBlock" BasedOn="{StaticResource WidgetTextStyle}">
             <Setter Property="Text" Value="через"/>
+            <Setter Property="FontSize" Value="11"/>
             <Setter Property="Opacity" Value="0.6"/>
             <Setter Property="Margin" Value="0,0,4,0"/>
         </Style>
         
         <Style x:Key="CountdownStyle" TargetType="TextBlock" BasedOn="{StaticResource WidgetTextStyle}">
             <Setter Property="FontFamily" Value="Consolas, Courier New, monospace"/>
+            <Setter Property="FontSize" Value="11"/>
             <Setter Property="FontWeight" Value="Medium"/>
-            <Setter Property="Opacity" Value="0.9"/>
+            <Setter Property="Opacity" Value="0.85"/>
         </Style>
         
         <!-- Menu item style -->
@@ -111,9 +110,9 @@
         <Border x:Name="MainBorder"
             Background="#CC202020"
             CornerRadius="4"
-            Padding="12,0"
+            Padding="10,6"
             Margin="2"
-            Height="32"
+            Height="44"
             VerticalAlignment="Center"
             RenderTransformOrigin="0.5,0.5">
         <Border.RenderTransform>
@@ -130,7 +129,7 @@
                     BorderBrush="#4CAF50"
                     BorderThickness="2"
                     CornerRadius="4"
-                    Margin="-12,0"
+                    Margin="-10,-6"
                     Opacity="0"
                     IsHitTestVisible="False">
                 <Border.Effect>
@@ -145,7 +144,7 @@
                     Padding="8,4"
                     VerticalAlignment="Top"
                     HorizontalAlignment="Center"
-                    Margin="0,-45,0,0"
+                    Margin="0,-50,0,0"
                     Visibility="Collapsed">
                 <TextBlock x:Name="MoveTooltipText"
                           Text="Drag widget"
@@ -154,26 +153,33 @@
             </Border>
             
             <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
-                <!-- Current Prayer Info -->
-                <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
-                    <TextBlock x:Name="NextPrayerName" 
-                               Style="{StaticResource PrayerNameStyle}" 
-                               Text="Fajr"/>
-                    <TextBlock x:Name="NextPrayerTime" 
-                               Style="{StaticResource TimeStyle}" 
-                               Margin="6,0,0,0"
-                               Text="05:30"/>
-                </StackPanel>
+                <!-- App Logo -->
+                <Image Source="fajr.png" 
+                       Width="28" Height="28" 
+                       Margin="0,0,10,0" 
+                       VerticalAlignment="Center"
+                       RenderOptions.BitmapScalingMode="HighQuality"/>
                 
-                <!-- Separator -->
-                <TextBlock Style="{StaticResource SeparatorStyle}"/>
-                
-                <!-- Countdown -->
-                <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
-                    <TextBlock x:Name="CountdownLabel" Style="{StaticResource CountdownLabelStyle}" Text="in"/>
-                    <TextBlock x:Name="Countdown" 
-                               Style="{StaticResource CountdownStyle}"
-                               Text="2:45:30"/>
+                <!-- Two-line content -->
+                <StackPanel VerticalAlignment="Center" Margin="0,-1,0,0">
+                    <!-- First line: Prayer name + time -->
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock x:Name="NextPrayerName" 
+                                   Style="{StaticResource PrayerNameStyle}" 
+                                   Text="Fajr"/>
+                        <TextBlock x:Name="NextPrayerTime" 
+                                   Style="{StaticResource TimeStyle}" 
+                                   Margin="6,0,0,0"
+                                   Text="05:30"/>
+                    </StackPanel>
+                    
+                    <!-- Second line: Countdown -->
+                    <StackPanel Orientation="Horizontal" Margin="0,2,0,0">
+                        <TextBlock x:Name="CountdownLabel" Style="{StaticResource CountdownLabelStyle}" Text="in"/>
+                        <TextBlock x:Name="Countdown" 
+                                   Style="{StaticResource CountdownStyle}"
+                                   Text="2:45:30"/>
+                    </StackPanel>
                 </StackPanel>
             </StackPanel>
         </Grid>

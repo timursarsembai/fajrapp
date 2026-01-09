@@ -62,6 +62,9 @@ public partial class PrayerTimesWindow : Window
         HeaderText.Text = LocalizationService.T("PrayerTimes");
         SettingsButton.ToolTip = LocalizationService.T("Settings");
         
+        // Update Hijri date
+        HijriDateText.Text = HijriDateService.FormatFullDate(DateTime.Today, _settings.Language);
+        
         // Prayer names
         FajrLabel.Text = LocalizationService.T("Fajr");
         SunriseLabel.Text = LocalizationService.T("Sunrise");
