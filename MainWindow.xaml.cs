@@ -21,6 +21,11 @@ public partial class MainWindow : Window
     private string _lastNotifiedPrayer = "";
     private DateTime _lastNotifiedDate = DateTime.MinValue;
     
+    // Data refresh tracking
+    private DateTime _lastDataDate = DateTime.MinValue;
+    private int _retryCount = 0;
+    private const int MaxRetries = 3;
+    
     // Move mode state
     private bool _isInMoveMode;
     private bool _isDragging;
@@ -332,6 +337,9 @@ public partial class MainWindow : Window
         
         // Setup midnight refresh
         SetupMidnightRefresh();
+        
+        // Setup periodic retry for failed data loads
+        SetupPeriodicRetry();
     }
     
     private void MainWindow_SizeChanged(object sender, SizeChangedEventArgs e)
@@ -458,22 +466,22 @@ public partial class MainWindow : Window
     {
         try
         {
+            _retryCount = 0; // Reset retry count on manual load
             _currentTimes = await _prayerService.GetPrayerTimesAsync(_settings);
             
             if (_currentTimes != null)
             {
+                _lastDataDate = DateTime.Today;
                 UpdateDisplay();
             }
             else
             {
-                NextPrayerName.Text = "Ошибка";
-                NextPrayerTime.Text = "";
-                Countdown.Text = "Нет данных";
+                ShowError();
             }
         }
         catch (Exception ex)
         {
-            NextPrayerName.Text = "Ошибка";
+            NextPrayerName.Text = LocalizationService.T("Error");
             NextPrayerTime.Text = "";
             Countdown.Text = ex.Message.Length > 20 ? ex.Message[..20] + "..." : ex.Message;
         }
@@ -481,10 +489,72 @@ public partial class MainWindow : Window
     
     private void Timer_Tick(object? sender, EventArgs e)
     {
+        // Check if data needs refresh (new day or no data)
+        if (_lastDataDate.Date != DateTime.Today || _currentTimes == null)
+        {
+            _ = RefreshDataIfNeededAsync();
+        }
+        
         if (_currentTimes != null)
         {
             UpdateDisplay();
         }
+    }
+    
+    private async System.Threading.Tasks.Task RefreshDataIfNeededAsync()
+    {
+        // Don't retry too often - but reset every 10 minutes to keep trying
+        if (_retryCount >= MaxRetries)
+        {
+            // Will be reset by the periodic check
+            return;
+        }
+        
+        try
+        {
+            _currentTimes = await _prayerService.GetPrayerTimesAsync(_settings);
+            
+            if (_currentTimes != null)
+            {
+                _lastDataDate = DateTime.Today;
+                _retryCount = 0;
+                UpdateDisplay();
+            }
+            else
+            {
+                _retryCount++;
+                ShowError();
+            }
+        }
+        catch
+        {
+            _retryCount++;
+            ShowError();
+        }
+    }
+    
+    private void ShowError()
+    {
+        NextPrayerName.Text = LocalizationService.T("Error");
+        NextPrayerTime.Text = "";
+        Countdown.Text = LocalizationService.T("NoData");
+    }
+    
+    private void SetupPeriodicRetry()
+    {
+        // Reset retry count every 10 minutes to allow periodic retry attempts
+        var retryTimer = new DispatcherTimer
+        {
+            Interval = TimeSpan.FromMinutes(10)
+        };
+        retryTimer.Tick += (s, e) =>
+        {
+            if (_currentTimes == null || _lastDataDate.Date != DateTime.Today)
+            {
+                _retryCount = 0; // Allow new retry attempts
+            }
+        };
+        retryTimer.Start();
     }
     
     private void UpdateDisplay()
