@@ -36,7 +36,7 @@ $innoScript = @"
 ; Download Inno Setup: https://jrsoftware.org/isinfo.php
 
 #define MyAppName "FajrApp"
-#define MyAppVersion "1.3.1"
+#define MyAppVersion "1.3.2"
 #define MyAppPublisher "Timur Sarsembai"
 #define MyAppURL "https://github.com/timursarsembai/fajrapp"
 #define MyAppExeName "FajrApp.exe"
