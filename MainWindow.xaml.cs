@@ -287,6 +287,10 @@ public partial class MainWindow : Window
         {
             var donateWindow = new DonateWindow();
             donateWindow.ShowDialog();
+            
+            // Restore Topmost
+            Topmost = false;
+            Topmost = true;
         });
     }
     
@@ -298,6 +302,10 @@ public partial class MainWindow : Window
         {
             var aboutWindow = new AboutWindow();
             aboutWindow.ShowDialog();
+            
+            // Restore Topmost
+            Topmost = false;
+            Topmost = true;
         });
     }
     
@@ -441,6 +449,13 @@ public partial class MainWindow : Window
             prayerWindow.Closed += (s, args) =>
             {
                 _prayerTimesWindow = null;
+                
+                // Force Topmost update to prevent widget from hiding behind the taskbar
+                Dispatcher.BeginInvoke(() => 
+                {
+                    Topmost = false;
+                    Topmost = true;
+                });
                 
                 // Check if settings were requested
                 if (prayerWindow.SettingsRequested)
@@ -711,6 +726,10 @@ public partial class MainWindow : Window
             ApplyTheme(); // Apply theme changes
             _ = LoadPrayerTimesAsync();
         }
+        
+        // Restore Topmost
+        Topmost = false;
+        Topmost = true;
     }
     
     private void EnterMoveMode()
