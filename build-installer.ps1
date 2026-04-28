@@ -23,7 +23,7 @@ if (Test-Path ".\fajr.ico") {
 }
 
 # Build Release
-dotnet publish -c Release -o ".\publish\install\files" --no-self-contained
+dotnet publish -c Release -r win-x64 -o ".\publish\install\files" --self-contained true
 
 if ($LASTEXITCODE -ne 0) {
     Write-Host "Build failed!" -ForegroundColor Red
@@ -36,7 +36,7 @@ $innoScript = @"
 ; Download Inno Setup: https://jrsoftware.org/isinfo.php
 
 #define MyAppName "FajrApp"
-#define MyAppVersion "1.0.0"
+#define MyAppVersion "1.3.1"
 #define MyAppPublisher "Timur Sarsembai"
 #define MyAppURL "https://github.com/timursarsembai/fajrapp"
 #define MyAppExeName "FajrApp.exe"

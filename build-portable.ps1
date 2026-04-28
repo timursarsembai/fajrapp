@@ -11,7 +11,7 @@ if (Test-Path ".\publish\portable") {
 }
 
 # Build Release
-dotnet publish -c Release -o ".\publish\portable" --no-self-contained
+dotnet publish -c Release -r win-x64 -o ".\publish\portable" --self-contained true
 
 if ($LASTEXITCODE -ne 0) {
     Write-Host "Build failed!" -ForegroundColor Red
@@ -22,10 +22,6 @@ if ($LASTEXITCODE -ne 0) {
 $readme = @"
 FajrApp - Portable Version
 ==========================
-
-REQUIREMENTS:
-- .NET 8.0 Desktop Runtime
-  Download: https://dotnet.microsoft.com/download/dotnet/8.0
 
 HOW TO USE:
 1. Extract this folder to any location
