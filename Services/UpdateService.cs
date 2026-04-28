@@ -25,7 +25,22 @@ public static class UpdateService
     };
     
     private const string GitHubApiUrl = "https://api.github.com/repos/timursarsembai/fajrapp/releases/latest";
-    private const string CurrentVersion = "1.3.0";
+    
+    public static string CurrentVersion
+    {
+        get
+        {
+            try
+            {
+                var version = System.Reflection.Assembly.GetExecutingAssembly().GetName().Version;
+                return $"{version?.Major}.{version?.Minor}.{version?.Build}";
+            }
+            catch
+            {
+                return "1.3.2";
+            }
+        }
+    }
     
     static UpdateService()
     {
@@ -119,23 +134,27 @@ public static class UpdateService
             var totalBytes = response.Content.Headers.ContentLength ?? -1;
             var downloadedBytes = 0L;
             
-            await using var contentStream = await response.Content.ReadAsStreamAsync();
-            await using var fileStream = new FileStream(filePath, FileMode.Create, FileAccess.Write, FileShare.None, 8192, true);
-            
-            var buffer = new byte[8192];
-            int bytesRead;
-            
-            while ((bytesRead = await contentStream.ReadAsync(buffer)) > 0)
+            await using (var contentStream = await response.Content.ReadAsStreamAsync())
+            await using (var fileStream = new FileStream(filePath, FileMode.Create, FileAccess.Write, FileShare.None, 8192, true))
             {
-                await fileStream.WriteAsync(buffer.AsMemory(0, bytesRead));
-                downloadedBytes += bytesRead;
+                var buffer = new byte[8192];
+                int bytesRead;
                 
-                if (totalBytes > 0)
+                while ((bytesRead = await contentStream.ReadAsync(buffer)) > 0)
                 {
-                    var progress = (int)(downloadedBytes * 100 / totalBytes);
-                    progressCallback?.Invoke(progress);
+                    await fileStream.WriteAsync(buffer.AsMemory(0, bytesRead));
+                    downloadedBytes += bytesRead;
+                    
+                    if (totalBytes > 0)
+                    {
+                        var progress = (int)(downloadedBytes * 100 / totalBytes);
+                        progressCallback?.Invoke(progress);
+                    }
                 }
-            }
+            } // Streams are disposed here
+            
+            // Wait a moment for file system to release the lock completely
+            await Task.Delay(500);
             
             // Run the installer
             Process.Start(new ProcessStartInfo
