@@ -137,12 +137,14 @@
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="*"/>
                         <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="Auto"/>
                     </Grid.ColumnDefinitions>
                     <StackPanel Orientation="Horizontal">
                         <TextBlock Text="🌙" FontSize="16" Margin="0,0,8,0"/>
                         <TextBlock x:Name="FajrLabel" Text="Фаджр" FontWeight="Medium"/>
                     </StackPanel>
-                    <TextBlock x:Name="FajrTime" Grid.Column="1" Text="05:30" FontWeight="SemiBold"/>
+                    <TextBlock x:Name="FajrTime" Grid.Column="1" Text="05:30" FontWeight="SemiBold" VerticalAlignment="Center"/>
+                    <Button x:Name="FajrStopButton" Grid.Column="2" Content="⏹" Foreground="#FF5555" Background="Transparent" BorderThickness="0" Margin="10,0,0,0" Padding="4,0" Cursor="Hand" Visibility="Collapsed" Click="StopButton_Click" ToolTip="Остановить азан"/>
                 </Grid>
                 
                 <Border Height="1" Background="#3D3D3D" Margin="0,4,0,8"/>
@@ -167,12 +169,14 @@
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="*"/>
                         <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="Auto"/>
                     </Grid.ColumnDefinitions>
                     <StackPanel Orientation="Horizontal">
                         <TextBlock Text="☀️" FontSize="16" Margin="0,0,8,0"/>
                         <TextBlock x:Name="DhuhrLabel" Text="Зухр" FontWeight="Medium"/>
                     </StackPanel>
-                    <TextBlock x:Name="DhuhrTime" Grid.Column="1" Text="12:30" FontWeight="SemiBold"/>
+                    <TextBlock x:Name="DhuhrTime" Grid.Column="1" Text="12:30" FontWeight="SemiBold" VerticalAlignment="Center"/>
+                    <Button x:Name="DhuhrStopButton" Grid.Column="2" Content="⏹" Foreground="#FF5555" Background="Transparent" BorderThickness="0" Margin="10,0,0,0" Padding="4,0" Cursor="Hand" Visibility="Collapsed" Click="StopButton_Click" ToolTip="Остановить азан"/>
                 </Grid>
                 
                 <Border Height="1" Background="#3D3D3D" Margin="0,4,0,8"/>
@@ -182,12 +186,14 @@
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="*"/>
                         <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="Auto"/>
                     </Grid.ColumnDefinitions>
                     <StackPanel Orientation="Horizontal">
                         <TextBlock Text="🌤️" FontSize="16" Margin="0,0,8,0"/>
                         <TextBlock x:Name="AsrLabel" Text="Аср" FontWeight="Medium"/>
                     </StackPanel>
-                    <TextBlock x:Name="AsrTime" Grid.Column="1" Text="15:00" FontWeight="SemiBold"/>
+                    <TextBlock x:Name="AsrTime" Grid.Column="1" Text="15:00" FontWeight="SemiBold" VerticalAlignment="Center"/>
+                    <Button x:Name="AsrStopButton" Grid.Column="2" Content="⏹" Foreground="#FF5555" Background="Transparent" BorderThickness="0" Margin="10,0,0,0" Padding="4,0" Cursor="Hand" Visibility="Collapsed" Click="StopButton_Click" ToolTip="Остановить азан"/>
                 </Grid>
                 
                 <Border Height="1" Background="#3D3D3D" Margin="0,4,0,8"/>
@@ -197,12 +203,14 @@
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="*"/>
                         <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="Auto"/>
                     </Grid.ColumnDefinitions>
                     <StackPanel Orientation="Horizontal">
                         <TextBlock Text="🌇" FontSize="16" Margin="0,0,8,0"/>
                         <TextBlock x:Name="MaghribLabel" Text="Магриб" FontWeight="Medium"/>
                     </StackPanel>
-                    <TextBlock x:Name="MaghribTime" Grid.Column="1" Text="17:45" FontWeight="SemiBold"/>
+                    <TextBlock x:Name="MaghribTime" Grid.Column="1" Text="17:45" FontWeight="SemiBold" VerticalAlignment="Center"/>
+                    <Button x:Name="MaghribStopButton" Grid.Column="2" Content="⏹" Foreground="#FF5555" Background="Transparent" BorderThickness="0" Margin="10,0,0,0" Padding="4,0" Cursor="Hand" Visibility="Collapsed" Click="StopButton_Click" ToolTip="Остановить азан"/>
                 </Grid>
                 
                 <Border Height="1" Background="#3D3D3D" Margin="0,4,0,8"/>
@@ -212,12 +220,14 @@
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="*"/>
                         <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="Auto"/>
                     </Grid.ColumnDefinitions>
                     <StackPanel Orientation="Horizontal">
                         <TextBlock Text="🌑" FontSize="16" Margin="0,0,8,0"/>
                         <TextBlock x:Name="IshaLabel" Text="Иша" FontWeight="Medium"/>
                     </StackPanel>
-                    <TextBlock x:Name="IshaTime" Grid.Column="1" Text="19:30" FontWeight="SemiBold"/>
+                    <TextBlock x:Name="IshaTime" Grid.Column="1" Text="19:30" FontWeight="SemiBold" VerticalAlignment="Center"/>
+                    <Button x:Name="IshaStopButton" Grid.Column="2" Content="⏹" Foreground="#FF5555" Background="Transparent" BorderThickness="0" Margin="10,0,0,0" Padding="4,0" Cursor="Hand" Visibility="Collapsed" Click="StopButton_Click" ToolTip="Остановить азан"/>
                 </Grid>
             </StackPanel>
             

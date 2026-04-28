@@ -18,6 +18,11 @@ public static class NotificationService
     private static MediaPlayer? _mediaPlayer;
     private static bool _isPlaying;
     
+    public static bool IsPlaying => _isPlaying;
+    public static string? ActivePrayerKey { get; private set; }
+    
+    public static event EventHandler? IsPlayingChanged;
+    
     private static readonly string SoundsFolder = Path.Combine(
         AppDomain.CurrentDomain.BaseDirectory,
         "Sounds"
@@ -29,8 +34,10 @@ public static class NotificationService
     /// <summary>
     /// Shows notification and plays sound for prayer time
     /// </summary>
-    public static void NotifyPrayerTime(string prayerName, string prayerTime, NotificationSoundType soundType, bool isFajr)
+    public static void NotifyPrayerTime(string prayerName, string prayerTime, NotificationSoundType soundType, bool isFajr, string prayerKey)
     {
+        ActivePrayerKey = prayerKey;
+        
         // Show notification popup
         ShowNotificationPopup(prayerName, prayerTime);
         
@@ -63,7 +70,14 @@ public static class NotificationService
     public static void PlaySound(NotificationSoundType soundType, bool isFajr)
     {
         if (_isPlaying || soundType == NotificationSoundType.None)
+        {
+            if (soundType == NotificationSoundType.None)
+            {
+                ActivePrayerKey = null;
+                IsPlayingChanged?.Invoke(null, EventArgs.Empty);
+            }
             return;
+        }
             
         try
         {
@@ -71,6 +85,8 @@ public static class NotificationService
             {
                 case NotificationSoundType.System:
                     SystemSounds.Exclamation.Play();
+                    ActivePrayerKey = null; // System sound doesn't stay playing
+                    IsPlayingChanged?.Invoke(null, EventArgs.Empty);
                     break;
                     
                 case NotificationSoundType.Azan:
@@ -82,6 +98,8 @@ public static class NotificationService
         {
             // Fallback to system sound if azan fails
             try { SystemSounds.Exclamation.Play(); } catch { }
+            ActivePrayerKey = null;
+            IsPlayingChanged?.Invoke(null, EventArgs.Empty);
         }
     }
     
@@ -102,6 +120,8 @@ public static class NotificationService
         {
             // No azan file found, play system sound
             SystemSounds.Exclamation.Play();
+            ActivePrayerKey = null;
+            IsPlayingChanged?.Invoke(null, EventArgs.Empty);
             return;
         }
         
@@ -115,11 +135,15 @@ public static class NotificationService
                 _mediaPlayer.MediaEnded += (s, e) =>
                 {
                     _isPlaying = false;
+                    ActivePrayerKey = null;
+                    IsPlayingChanged?.Invoke(null, EventArgs.Empty);
                     _mediaPlayer?.Close();
                 };
                 _mediaPlayer.MediaFailed += (s, e) =>
                 {
                     _isPlaying = false;
+                    ActivePrayerKey = null;
+                    IsPlayingChanged?.Invoke(null, EventArgs.Empty);
                     _mediaPlayer?.Close();
                 };
                 
@@ -127,10 +151,13 @@ public static class NotificationService
                 _mediaPlayer.Volume = 1.0;
                 _mediaPlayer.Play();
                 _isPlaying = true;
+                IsPlayingChanged?.Invoke(null, EventArgs.Empty);
             }
             catch
             {
                 _isPlaying = false;
+                ActivePrayerKey = null;
+                IsPlayingChanged?.Invoke(null, EventArgs.Empty);
             }
         });
     }
@@ -149,6 +176,8 @@ public static class NotificationService
                 _mediaPlayer = null;
             }
             _isPlaying = false;
+            ActivePrayerKey = null;
+            IsPlayingChanged?.Invoke(null, EventArgs.Empty);
         }
         catch { }
     }

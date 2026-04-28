@@ -688,7 +688,8 @@ public partial class MainWindow : Window
                     localizedName, 
                     formattedTime, 
                     _settings.NotificationSound,
-                    isFajr);
+                    isFajr,
+                    prayerKey);
                 
                 break;
             }

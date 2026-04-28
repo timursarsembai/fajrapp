@@ -52,6 +52,7 @@ public partial class PrayerTimesWindow : Window
         };
         
         Loaded += PrayerTimesWindow_Loaded;
+        Closed += (s, e) => NotificationService.IsPlayingChanged -= NotificationService_IsPlayingChanged;
         
         LoadTimes();
     }
@@ -76,8 +77,42 @@ public partial class PrayerTimesWindow : Window
     
     private void PrayerTimesWindow_Loaded(object sender, RoutedEventArgs e)
     {
+        NotificationService.IsPlayingChanged += NotificationService_IsPlayingChanged;
+        UpdateStopButtons();
+        
         PositionNearTaskbar();
         PlaySlideUpAnimation();
+    }
+    
+    private void NotificationService_IsPlayingChanged(object? sender, EventArgs e)
+    {
+        Dispatcher.Invoke(() => UpdateStopButtons());
+    }
+    
+    private void UpdateStopButtons()
+    {
+        FajrStopButton.Visibility = Visibility.Collapsed;
+        DhuhrStopButton.Visibility = Visibility.Collapsed;
+        AsrStopButton.Visibility = Visibility.Collapsed;
+        MaghribStopButton.Visibility = Visibility.Collapsed;
+        IshaStopButton.Visibility = Visibility.Collapsed;
+
+        if (NotificationService.IsPlaying && NotificationService.ActivePrayerKey != null)
+        {
+            switch (NotificationService.ActivePrayerKey)
+            {
+                case "Fajr": FajrStopButton.Visibility = Visibility.Visible; break;
+                case "Dhuhr": DhuhrStopButton.Visibility = Visibility.Visible; break;
+                case "Asr": AsrStopButton.Visibility = Visibility.Visible; break;
+                case "Maghrib": MaghribStopButton.Visibility = Visibility.Visible; break;
+                case "Isha": IshaStopButton.Visibility = Visibility.Visible; break;
+            }
+        }
+    }
+    
+    private void StopButton_Click(object sender, RoutedEventArgs e)
+    {
+        NotificationService.StopSound();
     }
     
     private void PositionNearTaskbar()
