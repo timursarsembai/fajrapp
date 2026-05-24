@@ -109,6 +109,7 @@ public static class NotificationService
     private static void PlayAzan(bool isFajr)
     {
         string azanPath = isFajr ? FajrAzanPath : RegularAzanPath;
+        var activePrayerKey = ActivePrayerKey;
         
         // If Fajr azan doesn't exist, fall back to regular azan
         if (isFajr && !File.Exists(FajrAzanPath))
@@ -130,6 +131,7 @@ public static class NotificationService
             try
             {
                 StopSound();
+                ActivePrayerKey = activePrayerKey;
                 
                 _mediaPlayer = new MediaPlayer();
                 _mediaPlayer.MediaEnded += (s, e) =>
