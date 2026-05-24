@@ -47,7 +47,8 @@ public partial class PrayerTimesWindow : Window
         // Close when clicked outside (deactivated)
         Deactivated += (s, e) =>
         {
-            if (!SettingsRequested)
+            // Keep the window open while azan is playing so user can press Stop
+            if (!SettingsRequested && !NotificationService.IsPlaying)
                 SafeClose();
         };
         
